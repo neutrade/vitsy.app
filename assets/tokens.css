@@ -1,0 +1,79 @@
+/* Generated from src/theme/tokens.ts by scripts/tokens-css.ts. Do not edit. */
+:root {
+  color-scheme: light dark;
+  --dl-bg: #FAF6F0;
+  --dl-surface: #FFFFFF;
+  --dl-surface2: #F3EEE6;
+  --dl-border: #E4DDD2;
+  --dl-ctl: #8F877C;
+  --dl-text: #1E1B18;
+  --dl-text-muted: #6B645B;
+  --dl-primary: #0E5E59;
+  --dl-on-primary: #FFFFFF;
+  --dl-secondary: #E07A45;
+  --dl-on-secondary: #1E1B18;
+  --dl-secondary-ink: #AD5220;
+  --dl-accent: #F2B33D;
+  --dl-streak: #B86E00;
+  --dl-heat-0: #EDE7DD;
+  --dl-heat-1: #B3DACF;
+  --dl-heat-2: #6FBBAE;
+  --dl-heat-3: #278276;
+  --dl-heat-4: #0E5E59;
+  --dl-destructive: #9A3B2E;
+  --dl-friend-mark-low: #1E1B18;
+  --dl-friend-mark-high: #FFFFFF;
+  --dl-scrim: rgba(30,27,24,0.45);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --dl-bg: #121413;
+    --dl-surface: #1B1E1D;
+    --dl-surface2: #252928;
+    --dl-border: #343938;
+    --dl-ctl: #6E7573;
+    --dl-text: #F2EEE8;
+    --dl-text-muted: #A9A39A;
+    --dl-primary: #5FC8BD;
+    --dl-on-primary: #121413;
+    --dl-secondary: #F29A6B;
+    --dl-on-secondary: #121413;
+    --dl-secondary-ink: #F29A6B;
+    --dl-accent: #F5C04A;
+    --dl-streak: #F5C04A;
+    --dl-heat-0: #262A29;
+    --dl-heat-1: #1E4B46;
+    --dl-heat-2: #277067;
+    --dl-heat-3: #46A597;
+    --dl-heat-4: #9BE3D6;
+    --dl-destructive: #E58A7C;
+    --dl-friend-mark-low: #F2EEE8;
+    --dl-friend-mark-high: #121413;
+    --dl-scrim: rgba(0,0,0,0.6);
+  }
+}
+:root[data-theme="dark"] {
+  --dl-bg: #121413;
+  --dl-surface: #1B1E1D;
+  --dl-surface2: #252928;
+  --dl-border: #343938;
+  --dl-ctl: #6E7573;
+  --dl-text: #F2EEE8;
+  --dl-text-muted: #A9A39A;
+  --dl-primary: #5FC8BD;
+  --dl-on-primary: #121413;
+  --dl-secondary: #F29A6B;
+  --dl-on-secondary: #121413;
+  --dl-secondary-ink: #F29A6B;
+  --dl-accent: #F5C04A;
+  --dl-streak: #F5C04A;
+  --dl-heat-0: #262A29;
+  --dl-heat-1: #1E4B46;
+  --dl-heat-2: #277067;
+  --dl-heat-3: #46A597;
+  --dl-heat-4: #9BE3D6;
+  --dl-destructive: #E58A7C;
+  --dl-friend-mark-low: #F2EEE8;
+  --dl-friend-mark-high: #121413;
+  --dl-scrim: rgba(0,0,0,0.6);
+}

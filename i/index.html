@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en-GB" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vitsy invite</title>
+<meta name="description" content="A Vitsy invite link. Open it on your phone with Vitsy installed.">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<meta name="color-scheme" content="light">
+<link rel="icon" href="/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/assets/tokens.css">
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/invite.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="/"><img src="/assets/icon-128.png" width="36" height="36" alt="">Vitsy</a>
+    <nav class="site-nav" aria-label="Main">
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/pricing/">Plus</a></li>
+        <li><a href="/support/">Support</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="wrap page prose">
+  <h1 id="page-title">Vitsy invite</h1>
+  <div id="page-default">
+    <p class="lead">This page opens Vitsy invite links.</p>
+    <noscript>
+      <p>To open a Vitsy invite, open this link on your phone with Vitsy installed. Without JavaScript, this page can only say that much.</p>
+    </noscript>
+  </div>
+  <div id="invite-valid" hidden>
+    <p class="lead">Someone has sent you a Vitsy invite. If you have the app on this phone, open the invite in it.</p>
+    <div class="actions">
+      <a class="button" id="invite-open" href="/">Open in Vitsy</a>
+      <!-- "About Vitsy" while the store listings say coming soon; change back to "Get Vitsy" with the store links (site/README.md). -->
+      <a class="button outline" href="/">About Vitsy</a>
+    </div>
+    <p class="muted">Invite links work for 14 days, and the person who sent one can turn it off at any time.</p>
+  </div>
+  <div id="invite-invalid" hidden>
+    <p class="lead">This isn't a Vitsy invite link.</p>
+    <p>Check you have the whole link, or ask the person who sent it for a new one. <a href="/">Go to the Vitsy home page</a>.</p>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <ul>
+      <li><a href="/privacy/">Privacy</a></li>
+      <li><a href="/terms/">Terms</a></li>
+      <li><a href="/support/">Support</a></li>
+      <li><a href="mailto:support@neutrade.co.uk">support@neutrade.co.uk</a></li>
+    </ul>
+    <p>&copy; 2026 Neutrade Ltd. Vitsy is made by Neutrade Ltd.</p>
+  </div>
+</footer>
+</body>
+</html>

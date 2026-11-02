@@ -1,0 +1,440 @@
+/*
+ * Vitsy website (factory job 20261020-website, D1937). Colours come only from tokens.css, which
+ * scripts/tokens-css.ts generates from src/theme/tokens.ts: no colour literals here. The site is always light
+ * (job 20261021-website-light, D1956): every page has <html data-theme="light">, so the generated dark rules never
+ * apply, whatever the reader's setting.
+ */
+
+/* Fonts: copied from the app's @expo-google-fonts packages (SIL Open Font License, see fonts/OFL-*.txt). */
+@font-face {
+  font-family: 'Fraunces';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(/assets/fonts/Fraunces_600SemiBold.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(/assets/fonts/Inter_400Regular.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(/assets/fonts/Inter_600SemiBold.ttf) format('truetype');
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Light native controls and scrollbars too. More specific than the generated :root, so stylesheet order doesn't matter. */
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--dl-bg);
+  color: var(--dl-text);
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  overflow-wrap: break-word;
+}
+
+h1,
+h2,
+h3 {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0 0 0.5em;
+}
+h1 {
+  font-size: clamp(2rem, 6vw, 3.25rem);
+}
+h2 {
+  font-size: clamp(1.5rem, 4vw, 2.125rem);
+}
+h3 {
+  font-size: 1.25rem;
+  margin-top: 1.5em;
+}
+
+p,
+ul,
+ol,
+dl {
+  margin: 0 0 1em;
+}
+
+a {
+  color: var(--dl-primary);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.15em;
+}
+a:hover {
+  text-decoration-thickness: 2px;
+}
+
+:focus-visible {
+  outline: 3px solid var(--dl-primary);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.skip {
+  position: absolute;
+  left: 1rem;
+  top: -10rem;
+  z-index: 10;
+  padding: 0.5rem 1rem;
+  background: var(--dl-surface);
+  color: var(--dl-primary);
+  border: 1px solid var(--dl-border);
+  border-radius: 8px;
+}
+.skip:focus {
+  top: 1rem;
+}
+
+.wrap {
+  width: 100%;
+  max-width: 68rem;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+/* Header and footer */
+.site-header {
+  border-bottom: 1px solid var(--dl-border);
+}
+.site-header .wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1.5rem;
+  padding-top: 0.875rem;
+  padding-bottom: 0.875rem;
+}
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  color: var(--dl-text);
+  text-decoration: none;
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 600;
+  font-size: 1.375rem;
+}
+.brand img {
+  width: 36px;
+  height: 36px;
+  border-radius: 22%;
+}
+.site-nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.25rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.site-nav a {
+  display: inline-block;
+  padding: 0.5rem 0;
+  color: var(--dl-text);
+  font-weight: 600;
+  text-decoration: none;
+}
+.site-nav a:hover,
+.site-nav a[aria-current='page'] {
+  color: var(--dl-primary);
+  text-decoration: underline;
+}
+
+.site-footer {
+  margin-top: 4rem;
+  border-top: 1px solid var(--dl-border);
+  color: var(--dl-text-muted);
+  font-size: 0.9375rem;
+}
+.site-footer .wrap {
+  padding-top: 1.5rem;
+  padding-bottom: 2.5rem;
+}
+.site-footer ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0.75rem;
+}
+.site-footer a {
+  display: inline-block;
+  padding: 0.25rem 0;
+}
+
+/* Text helpers */
+.eyebrow {
+  margin: 0 0 0.5rem;
+  color: var(--dl-primary);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.lead {
+  font-size: 1.1875rem;
+  color: var(--dl-text-muted);
+  max-width: 34rem;
+}
+.muted {
+  color: var(--dl-text-muted);
+}
+.small {
+  font-size: 0.9375rem;
+}
+.prose {
+  max-width: 42rem;
+}
+.prose h2 {
+  font-size: 1.5rem;
+  margin-top: 2em;
+}
+
+.badge {
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 0.5rem;
+  padding: 0.125rem 0.625rem;
+  border-radius: 999px;
+  background: var(--dl-primary);
+  color: var(--dl-on-primary);
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* Buttons and links styled as buttons */
+.button {
+  display: inline-block;
+  padding: 0.75rem 1.375rem;
+  border-radius: 999px;
+  background: var(--dl-primary);
+  color: var(--dl-on-primary);
+  font-weight: 600;
+  text-decoration: none;
+  border: 2px solid var(--dl-primary);
+}
+.button:hover {
+  text-decoration: underline;
+}
+.button.secondary {
+  background: var(--dl-secondary);
+  border-color: var(--dl-secondary);
+  color: var(--dl-on-secondary);
+}
+.button.outline {
+  background: transparent;
+  color: var(--dl-primary);
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 1.5rem 0;
+}
+
+/* Cards */
+.card {
+  background: var(--dl-surface);
+  border: 1px solid var(--dl-border);
+  border-radius: 16px;
+  padding: 1.25rem 1.375rem;
+  margin: 0 0 1rem;
+}
+.card > :first-child {
+  margin-top: 0;
+}
+.card > :last-child {
+  margin-bottom: 0;
+}
+
+/* Hero */
+.hero {
+  display: grid;
+  gap: 2rem;
+  align-items: center;
+  padding: 2.5rem 0 1rem;
+}
+.availability {
+  list-style: none;
+  padding: 0;
+  margin: 1.25rem 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+}
+.availability li {
+  padding: 0.375rem 0.875rem;
+  border: 1px solid var(--dl-border);
+  border-radius: 999px;
+  background: var(--dl-surface);
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+/*
+ * Screenshots: the raw simulator capture, tight to the screen. The display's rounded corners are drawn here
+ * (iPhone 18 Pro: about 13.7% of the width by 6.3% of the height). No padding, background, shadow or frame:
+ * only a hairline so a light screen still reads against the light page.
+ */
+.screen {
+  display: block;
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  aspect-ratio: 1206 / 2622;
+  border-radius: 13.7% / 6.3%;
+  border: 1px solid var(--dl-border);
+}
+.shots {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.25rem;
+  margin: 0;
+}
+.shots picture {
+  flex: 1 1 200px;
+  max-width: 280px;
+  min-width: 0;
+}
+.shots .screen {
+  margin: 0 auto;
+}
+.hero .shots picture {
+  max-width: 300px;
+}
+
+/* Feature sections */
+.feature {
+  display: grid;
+  gap: 1.75rem;
+  align-items: center;
+  padding: 3rem 0;
+  border-top: 1px solid var(--dl-border);
+}
+.feature .text {
+  max-width: 34rem;
+}
+/* The last section sits on the footer's own top margin, with no extra padding below it. */
+.feature:last-child {
+  padding-bottom: 0;
+}
+
+/* Pricing */
+.plans {
+  display: grid;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+.plan h2 {
+  font-size: 1.5rem;
+}
+.plan .price {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem;
+}
+.plan.plus {
+  border: 2px solid var(--dl-primary);
+}
+.ticks {
+  padding-left: 1.25rem;
+}
+.ticks li {
+  margin-bottom: 0.375rem;
+}
+.promise {
+  border-left: 4px solid var(--dl-secondary);
+  padding: 0.5rem 0 0.5rem 1rem;
+  margin: 1.5rem 0;
+  font-size: 1.125rem;
+}
+
+/* Support and legal pages */
+.faq dt {
+  font-weight: 600;
+  margin-top: 1.25rem;
+}
+.faq dd {
+  margin: 0.25rem 0 0;
+}
+.signpost .numbers {
+  list-style: none;
+  padding: 0;
+}
+.signpost .numbers li {
+  margin-bottom: 0.5rem;
+}
+.updated {
+  color: var(--dl-text-muted);
+  margin-top: -0.25rem;
+}
+.page {
+  padding-top: 2.5rem;
+}
+/* A heading straight inside a page (Plus: Register interest) gets the same rhythm as prose headings. */
+.page > h2 {
+  margin-top: 2em;
+}
+
+@media (min-width: 720px) {
+  .hero {
+    grid-template-columns: 1.1fr 0.9fr;
+    padding-top: 4rem;
+  }
+  .feature {
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+  }
+  .feature:nth-of-type(even) .text {
+    order: 2;
+  }
+  .plans {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* "or email ..." beside a mailto button, for people without a mail app */
+.or-email {
+  align-self: center;
+  margin: 0;
+  overflow-wrap: anywhere;
+}

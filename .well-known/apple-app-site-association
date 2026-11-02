@@ -1,0 +1,10 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["427TC8LJ3W.app.vitsy.mobile"],
+        "components": [{ "/": "/i/*", "comment": "Friend invite links (FR-Q5)" }]
+      }
+    ]
+  }
+}
