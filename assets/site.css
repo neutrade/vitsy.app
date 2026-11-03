@@ -420,6 +420,13 @@ a:hover {
   border: 2px solid var(--dl-primary);
   color: var(--dl-on-primary);
 }
+/* The yearly price per month (Stephen, 3 Nov 2026): a smaller secondary line, so £29.99 stays the main figure. */
+.price-per-month {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+  opacity: 0.85;
+}
 .plan-note {
   margin: 0 0 0.75rem;
 }
