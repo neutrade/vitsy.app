@@ -28,7 +28,7 @@
 
 <main id="main" class="wrap page prose">
   <h1>Privacy policy</h1>
-  <p class="updated">Vitsy &middot; Last updated 20 October 2026</p>
+  <p class="updated">Vitsy &middot; Last updated 2 November 2026</p>
 
   <div class="card">
     <p><strong>The short version:</strong> what you enter in Vitsy stays on your phone, in an encrypted database. There's no account, no advertising and no tracking, and we don't receive your records.</p>
@@ -46,28 +46,35 @@
 
   <h2>What the app sends</h2>
   <p>Nothing from your records. Vitsy has no advertising, no analytics and no tracking.</p>
-  <!-- Draft for Stephen's sign-off (job 20261028-glp1-remote-switch, D2009); not published by that job. -->
-  <p>Vitsy also checks a small settings file on this website, vitsy.app, to know whether to show a feature. The request contains nothing about you or your records. The website is hosted by GitHub Pages, and GitHub may record your phone's IP address, as it does for visits to the website.</p>
-  <p>If Vitsy crashes, it may send a crash report to Sentry, a crash-reporting service, using its EU data region. A report holds technical details only: the kind of error, where in the app it happened, the app version, the operating system, the device family and a random number for this install. It's built from a fixed list of allowed fields, so names, notes and what you take are never included.</p>
+  <p>Vitsy asks this website, vitsy.app, for a small settings file that tells it whether to show a feature. It asks a moment after it starts, then at most about once an hour while the app is open. The request carries nothing about you, your records or your phone's identity: no account, no device identifier and no cookies. The website is hosted by GitHub Pages, so GitHub can see your phone's IP address and the basic technical details any web request carries, as it does for visits to the website.</p>
+  <p>If this version of Vitsy has crash reporting turned on, it may send Sentry, a crash-reporting service, a short note each time the app opens and closes, so we can count how many sessions end without a crash. It may also send a report when the app crashes or hits an error. Sentry uses its EU data region and, like any service your phone contacts, sees your phone's IP address. Notes and reports hold technical details only: the kind of error, where in the app it happened, the app version, the operating system, the device family and a random number for this install. They're built from a fixed list of allowed fields, so names, notes and what you take are never included.</p>
+  <p>Each time it starts, Vitsy also checks with RevenueCat, the company that manages Plus subscriptions for us, whether you have Plus. What it sends is set out under Payments and Plus below.</p>
   <p>Separately, if you have turned on Apple's &ldquo;Share With App Developers&rdquo; or Android's equivalent, Apple or Google may send us crash reports. Those come from them, not from Vitsy.</p>
+  <p>Apart from these, the app sends nothing.</p>
 
   <h2>Apple Health</h2>
-  <p>On iPhone, Vitsy can read your workouts and your sleep from Apple Health, only if you allow it. It never writes anything to Health. Workouts it reads are used for Training and for timing around workouts, and are kept with your training history on your phone. Sleep is shown in the Diary while you look at it and is never stored, logged, exported or backed up by Vitsy. You can turn access off at any time in the Health app or in Settings.</p>
+  <p>On iPhone, Vitsy can read from Apple Health, only if you allow it. It reads your workouts and your sleep. On iOS 26 or later, if you choose to import medications, it reads only the ones you pick in Apple's own screen. It never writes anything to Health.</p>
+  <p>Workouts it reads are used for Training and for timing around workouts, and are kept with your training history on your phone. Sleep is shown in the Diary while you look at it and is never stored, logged, exported or backed up by Vitsy. Imported medications become items in Vitsy only after you confirm them. From then on they're kept on your phone like any other item you add.</p>
+  <p>You can turn access off at any time in the Health app or in your iPhone's Settings.</p>
 
   <h2>Reminders and notifications</h2>
-  <p>Reminders are scheduled by your phone, not sent from a server. By default, item names stay off your lock screen: notifications show the stack name, such as &ldquo;Morning&rdquo;. In Settings, under Names outside the app, you can show names or hide them all.</p>
-  <p>If you turn on the check-in reminder, Vitsy uses whether you've already checked in that day to decide whether to remind you. That check happens on your phone.</p>
+  <p>Reminders, including the check-in reminder, are scheduled on your phone, not sent from a server. By default, item names stay off your lock screen: notifications show the stack name, such as &ldquo;Morning&rdquo;. In Settings, under Names outside the app, you can show names or hide them all.</p>
+  <p>The same setting covers widgets, the Apple Watch app and Siri. What they show is passed from your phone to your own devices, not through us.</p>
+  <p>If you turn on the check-in reminder, Vitsy uses whether you've already checked in that day to decide whether to schedule it. That check happens on your phone.</p>
 
   <h2>The Diary, Patterns and the support numbers</h2>
   <p>Check-ins are kept on your phone, are included when you export your data, and are removed by Delete all data. Patterns are worked out on your phone each time you look, and are never stored, sent or logged.</p>
-  <p>If several recent check-ins show a low mood, Vitsy may quietly offer the numbers for Samaritans, NHS 111 and 999, at most once a week. This is decided on your phone and nothing is sent. You can turn it off in Settings, under Diary.</p>
+  <p>If several recent check-ins show a low mood, Vitsy may quietly offer the numbers for Samaritans, NHS 111 and 999, at most once a week. This is decided on your phone and nothing is sent. The only thing Vitsy keeps about it is the date it was last shown, stored only on this phone and removed by Delete all data. You can turn it off in Settings, under Diary.</p>
 
-  <h2>Payments</h2>
-  <p>Plus is bought and managed through the App Store or Google Play. They handle the payment, and we don't see your card details.</p>
+  <h2>Payments and Plus</h2>
+  <p>Plus is bought through the App Store or Google Play. They take the payment, and neither we nor RevenueCat see your card details. You manage or cancel your subscription in your App Store or Google Play account.</p>
+  <p>RevenueCat, Inc. manages Plus subscriptions for us. It acts as our processor, which means it uses this information only on our instructions: to check and manage your subscription, and to restore your purchases on a new phone. Each time Vitsy starts, it sends RevenueCat a random app user ID that isn't linked to your name or email, your App Store or Google Play purchase receipts, and your phone's IP address. RevenueCat's software also sends Apple's identifier for vendor (a code Apple gives each app maker for your phone), your phone's model, its operating system version, your language settings, your App Store country and the Vitsy version. RevenueCat also records whether apps are allowed to track you on this phone; Vitsy doesn't ask to track you and doesn't track you. Vitsy never sends your records, item names or health information to RevenueCat, and you don't need an account.</p>
+  <p>RevenueCat is based in the United States, so this information goes there. The transfer is covered by the International Data Transfer Addendum issued by the UK Information Commissioner, added to the EU Standard Contractual Clauses, as set out in RevenueCat's data processing terms.</p>
 
   <h2>Exports and diagnostics</h2>
   <p>When you export your data, the file is made on your phone. Once you share or move it, it's outside the app and you control where it goes.</p>
-  <p>If you contact support from the app, you can choose to add a diagnostics file. You see it before it's added. It holds technical details such as versions, settings and reminder times, and leaves out item names unless you tick the box to include them. You send it yourself, from your own email app.</p>
+  <p>If you contact support from the app, Vitsy opens a ready-written email in your own email app, and you choose whether to send it. You can add a diagnostics file if you want to. You see it before it's added. It holds technical details such as versions, settings and reminder times, and leaves out item names unless you tick the box to include them.</p>
+  <p>If your records won't open, the app offers a ready-written email to us in the same way. It holds only a reason code and the app version.</p>
 
   <h2>When you email us</h2>
   <p>If you email us, including to register interest, we receive your email address and what you write. We use them only to answer you, or to tell you when Vitsy launches if that's what you asked. If your message includes health information, we use it only to help you.</p>
