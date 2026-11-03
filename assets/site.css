@@ -274,28 +274,65 @@ a:hover {
   margin-bottom: 0;
 }
 
-/* Hero */
+/*
+ * Hero (job 20261102-site-features, from the marketing review): a full-width flat teal band, as the store
+ * screenshots will be, with white type and one amber word. The band reaches the window's edges with a spread
+ * shadow clipped to the hero's own height, so nothing is wider than the page and it never scrolls sideways.
+ * On a phone the real Today capture sits straight under the headline, cropped to the Day Arc, so it shows above the
+ * fold; from 720 px it sits beside the text, uncropped.
+ */
 .hero {
   display: grid;
-  gap: 2rem;
+  grid-template-areas: 'head' 'shots' 'body';
+  gap: 1.5rem;
   align-items: center;
-  padding: 2.5rem 0 1rem;
+  padding: 2rem 0 2.5rem;
+  background: var(--dl-primary);
+  color: var(--dl-on-primary);
+  box-shadow: 0 0 0 100vmax var(--dl-primary);
+  clip-path: inset(0 -100vmax);
+}
+.hero-head {
+  grid-area: head;
+}
+.hero .shots {
+  grid-area: shots;
+}
+.hero-body {
+  grid-area: body;
+}
+.hero h1 {
+  margin-bottom: 0;
+}
+.hero .highlight {
+  color: var(--dl-accent);
+}
+.hero .eyebrow,
+.hero .lead,
+.hero a {
+  color: var(--dl-on-primary);
+}
+.hero .button.secondary {
+  color: var(--dl-on-secondary);
+}
+.hero :focus-visible {
+  outline-color: var(--dl-accent);
+}
+.hero .lead {
+  margin-top: 0;
+}
+.hero .actions {
+  margin: 1.25rem 0 0.75rem;
 }
 .availability {
-  list-style: none;
-  padding: 0;
-  margin: 1.25rem 0 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem 0.75rem;
-}
-.availability li {
-  padding: 0.375rem 0.875rem;
-  border: 1px solid var(--dl-border);
-  border-radius: 999px;
-  background: var(--dl-surface);
+  margin: 0 0 0.25rem;
   font-size: 0.9375rem;
   font-weight: 600;
+}
+.register-line {
+  margin: 0;
+  font-size: 0.9375rem;
+  overflow-wrap: anywhere;
 }
 
 /*
@@ -330,6 +367,21 @@ a:hover {
 .hero .shots picture {
   max-width: 300px;
 }
+/* On the teal band the hairline would show as a light edge; it takes the band's colour there. */
+.hero .screen {
+  border-color: var(--dl-primary);
+}
+@media (max-width: 719.98px) {
+  .hero .shots picture {
+    max-width: 340px;
+  }
+  .hero .screen {
+    aspect-ratio: 1206 / 1150;
+    object-fit: cover;
+    object-position: top;
+    border-radius: 24px;
+  }
+}
 
 /* Feature sections */
 .feature {
@@ -362,8 +414,25 @@ a:hover {
   font-weight: 600;
   margin: 0 0 0.25rem;
 }
+/* Plus is the filled card (marketing review): the offer, "14 days free, then £29.99 a year", reads as the offer. */
 .plan.plus {
+  background: var(--dl-primary);
   border: 2px solid var(--dl-primary);
+  color: var(--dl-on-primary);
+}
+/* The yearly price per month (Stephen, 3 Nov 2026): a smaller secondary line, so £29.99 stays the main figure. */
+.price-per-month {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+  opacity: 0.85;
+}
+.plan-note {
+  margin: 0 0 0.75rem;
+}
+/* The Plus card keeps its own height rather than stretching to the longer Free card (UI review round 1). */
+.plan.plus {
+  align-self: start;
 }
 .ticks {
   padding-left: 1.25rem;
@@ -376,6 +445,101 @@ a:hover {
   padding: 0.5rem 0 0.5rem 1rem;
   margin: 1.5rem 0;
   font-size: 1.125rem;
+}
+
+/*
+ * Home's features overview (job 20261102-site-features): two groups of short tiles, the free ones first, then
+ * "Plus adds" on a tinted panel. One column at 320 px, two from about 360 px, three on a wide window.
+ */
+.overview {
+  padding: 3rem 0;
+}
+.overview .group {
+  margin: 1.5rem 0;
+}
+.overview .group h3 {
+  margin: 0 0 0.75rem;
+}
+.plus-group {
+  background: var(--dl-surface2);
+  border-radius: 16px;
+  padding: 1.25rem;
+}
+.tiles {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 9.5rem), 1fr));
+  gap: 0.75rem;
+}
+.tile {
+  background: var(--dl-surface);
+  border: 1px solid var(--dl-border);
+  border-radius: 12px;
+  padding: 0.875rem 1rem;
+  margin: 0;
+}
+.tile-title {
+  font-weight: 600;
+}
+.tile .badge {
+  margin-left: 0.375rem;
+  font-size: 0.75rem;
+}
+.tile-line {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  color: var(--dl-text-muted);
+}
+@media (min-width: 720px) {
+  .tiles {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+/* On a phone the tiles show their titles only, except the lines that carry a caveat or a list (UI review round 1). */
+@media (max-width: 479.98px) {
+  .tile-line {
+    display: none;
+  }
+  .tile-line.keep {
+    display: block;
+  }
+}
+
+/* Plus: the Free and Plus table. It scrolls inside its own box if it ever gets too wide; the page never does. */
+.table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+.compare {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+.compare caption {
+  text-align: left;
+  color: var(--dl-text-muted);
+  padding-bottom: 0.75rem;
+}
+.compare th,
+.compare td {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.625rem 0.75rem 0.625rem 0;
+  border-bottom: 1px solid var(--dl-border);
+}
+.compare thead th {
+  border-bottom-width: 2px;
+}
+.compare tbody th {
+  font-weight: 400;
+}
+.compare td {
+  font-weight: 600;
 }
 
 /* Support and legal pages */
@@ -408,14 +572,31 @@ a:hover {
 @media (min-width: 720px) {
   .hero {
     grid-template-columns: 1.1fr 0.9fr;
+    grid-template-areas: 'head shots' 'body shots';
+    align-items: end;
     padding-top: 4rem;
+  }
+  .hero-body {
+    align-self: start;
   }
   .feature {
     grid-template-columns: 1fr 1fr;
     gap: 3rem;
   }
-  .feature:nth-of-type(even) .text {
+  /*
+   * Alternate the text side. Counted among a page's sections: on Home the hero is the first and the features
+   * overview the second (job 20261102-site-features), so Today, the first feature, is the third and keeps its text
+   * on the right as before.
+   */
+  .feature:nth-of-type(odd) .text {
     order: 2;
+  }
+  /* A section with no screenshot uses the full width, not half of it (UI review round 1). */
+  .feature:not(:has(.shots)) {
+    grid-template-columns: 1fr;
+  }
+  .feature:not(:has(.shots)) .text {
+    max-width: 42rem;
   }
   .plans {
     grid-template-columns: 1fr 1fr;
