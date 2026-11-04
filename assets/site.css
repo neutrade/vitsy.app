@@ -592,13 +592,13 @@ h2,
   border-radius: 0;
 }
 /*
- * A figure is never wider than the capture at 2x, so it never upscales on a retina screen. It leaves room for its plate
- * (see Layers), so the plate never runs into the gutter.
+ * A figure is never wider than the capture at 2x, so it never upscales on a retina screen. It leaves room for its two
+ * plates (see Layers), so the outer plate never runs into the gutter.
  */
 .shot,
 .hero-shot {
   margin: 0;
-  width: min(100% - var(--plate-offset), 23.4375rem);
+  width: min(100% - 2 * var(--plate-offset), 23.4375rem);
   justify-self: center;
 }
 
@@ -781,7 +781,7 @@ main.bands {
 
 /*
  * Hero (Home only): the flat teal band. DOM order is the phone order: eyebrow, headline, lead, button, "or email",
- * the proof line, the controls slot, then the capture. The sky's layers sit under .hero-grid (plan B).
+ * the proof line, then the capture. The sky's layers sit under .hero-grid (plan B).
  */
 .hero {
   --ribbon-space: clamp(2rem, 1rem + 5vw, 7rem);
@@ -815,9 +815,6 @@ main.bands {
 .hero-text > .proof {
   margin-top: var(--sp-md);
 }
-.hero-text > .hero-controls {
-  margin-top: var(--sp-sm);
-}
 .hero .eyebrow,
 .hero a:not(.button) {
   color: var(--dl-on-primary);
@@ -848,10 +845,6 @@ main.bands {
   gap: 0 var(--sp-lg);
   list-style: none;
   padding: 0;
-}
-/* Holds the sky's Pause button (plan B), so the button appearing never moves the capture. */
-.hero-controls {
-  min-height: 44px;
 }
 .hero .screen {
   border-color: var(--dl-primary);
@@ -1037,17 +1030,20 @@ main.bands {
 /*
  * Sky and layers (plan B, job 20261104-site-overhaul, D2038). The hero's canvas (z 0) holds the Day Arc sky drawn by
  * /assets/sky.js; the static cream ribbon (z 1) is the arc line; the content (.hero-grid, z 2) sits on top. Both
- * layers are sized here before any script runs, so nothing shifts. Colours are tokens only.
+ * layers are sized here before any script runs, so nothing shifts. Colours are tokens only. The closing night band's
+ * canvas (job 20261104-site-sky-mobile) fills the band under its content the same way, and always shows the night sky.
  */
 .hero {
   --ribbon-w: 10px;
 }
 .hero-sky,
+.night-sky,
 .hero-ribbon {
   position: absolute;
   pointer-events: none;
 }
-.hero-sky {
+.hero-sky,
+.night-sky {
   display: block;
   inset: 0;
   width: 100%;
@@ -1080,69 +1076,44 @@ main.bands {
   }
 }
 /*
- * Phones (rework 1): the hero's text fills the band, so the sky gets its own strip between the controls and the
- * capture, with the ribbon arc along its foot, like the app's card (particles above an arc). The bottom ribbon goes.
+ * Phones: the sky uses the whole hero, keeping clear of each line of text rather than each block (job
+ * 20261104-site-sky-mobile), with the desktop's open sky above the eyebrow and open sky above the capture, and the
+ * hero keeps a flat foot: no bottom ribbon.
  */
-.hero-strip {
-  display: none;
-}
 @media (max-width: 719.98px) {
   .hero {
     --ribbon-space: 0px;
+    padding-top: 4.5rem;
+  }
+  /*
+   * Open sky between the text and the capture, where the strip was. It also keeps the capture below the first screen
+   * of a small phone, so the lead stays the largest thing painted there (LCP unchanged).
+   */
+  .hero-grid {
+    row-gap: var(--sp-5xl);
   }
   .hero > .hero-ribbon {
     display: none;
   }
-  .hero-strip {
-    display: block;
-    position: relative;
-    height: 120px;
-  }
-  .hero-strip .hero-ribbon {
-    left: calc(-1 * var(--gutter));
-    width: calc(100% + 2 * var(--gutter));
-    height: 44px;
-  }
 }
 
-/* The pause control: invisible but holding its space until sky.js marks it ready (no shift, nothing to focus). */
-.sky-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  min-height: 44px;
-  padding: 0 0.875rem;
-  font: inherit;
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: var(--dl-on-primary);
-  background: transparent;
-  border: 1px solid color-mix(in srgb, var(--dl-on-primary) 55%, transparent);
-  border-radius: var(--radius-pill);
-  cursor: pointer;
-}
-.sky-toggle:not(.is-ready) {
-  visibility: hidden;
-}
-.sky-toggle .glyph-play,
-.sky-toggle.is-paused .glyph-pause {
-  display: none;
-}
-.sky-toggle.is-paused .glyph-play {
-  display: inline;
-}
-
-/* The closing bands' static stars: the app's 14 night stars, frozen, spread through the band's top padding (rework 1). */
+/*
+ * The closing bands' static stars: the app's 14 night stars, frozen, spread through the band's top padding (rework 1).
+ * On Home they are the no-script fallback: sky.js marks the band while its canvas is in use, and they step aside.
+ */
 .night-stars {
   inset: 0 0 auto;
   height: max(5rem, var(--section-y));
   color: var(--dl-on-primary);
 }
+.band-night.has-sky > .night-stars {
+  display: none;
+}
 
 /* Mirrors the app: no sky under Increase Contrast; none for forced colours or print. */
 @media (prefers-contrast: more), (forced-colors: active), print {
   .hero-sky,
-  .sky-toggle {
+  .night-sky {
     display: none !important;
   }
 }
@@ -1159,17 +1130,19 @@ main.bands {
 }
 
 /*
- * Layers (job 20261104-site-layers). Red team #11's limits still hold: the plates and breakouts are static; the only
- * scroll motion is a plate sliding out from behind its capture (16 px at most, translate only), and none in the hero,
- * where the sky already moves.
+ * Layers (job 20261104-site-layers; job 20261104-site-sky-mobile). The plates and breakouts are static; the scroll
+ * motion is CSS only and translate only: each plate slides out from behind its capture (one offset, 16 px at most), and
+ * on Home each capture drifts 40 px against its text across its view range (a parallax Stephen asked for on 4 Nov 2026,
+ * overriding red team #11's 24 px rule). None in the hero, where the sky already moves and the LCP image stays still.
  *
- * Plates: every capture sits on a hard-edged dark-teal plate, offset down and right, with no blur and no shadow.
+ * Plates: every capture sits on a stack of two hard-edged plates, offset down and right with no blur and no shadow: the
+ * dark-teal plate at one offset and a lighter teal one at two, so it reads as three cards.
  */
 :root {
-  --plate-offset: clamp(10px, 0.5vw + 8px, 16px);
+  --plate-offset: clamp(12px, 0.5vw + 10px, 16px);
   --overlap: clamp(24px, 3vw + 14px, 56px);
   /* How much extra room the band below a breakout needs when the columns stack (beside the text there's no breakout). */
-  --after-overlap: var(--overlap);
+  --after-overlap: calc(var(--overlap) + var(--plate-offset));
   /* A seam is as tall as its capsule; the level line runs through the middle. */
   --seam-h: 12px;
   /* Extra space a seam adds under its chapter; none from 1024 px, where the gap already holds it. */
@@ -1200,16 +1173,29 @@ main.bands {
   background: var(--dl-plate);
   translate: var(--plate-offset) var(--plate-offset);
 }
+/* The second plate, further back: an existing palette token that reads on cream and on the brand teal. */
+.shot::after,
+.hero-shot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  border-radius: var(--radius-lg);
+  background: var(--dl-heat-2);
+  translate: calc(2 * var(--plate-offset)) calc(2 * var(--plate-offset));
+}
 
 /*
- * A zoomed figure hides its own overflow, which would clip a ::before plate, so its plate is a hard offset box-shadow
- * (no blur, no spread): the same plate, static. (Clipping the image with clip-path instead tore when composited.)
+ * A zoomed figure hides its own overflow, which would clip its pseudo-element plates, so its plates are two hard offset
+ * box-shadows (no blur, no spread): the same plates, static. (Clipping the image with clip-path instead tore when
+ * composited.)
  */
-.shot-zoom::before {
+.shot-zoom::before,
+.shot-zoom::after {
   content: none;
 }
 .shot-zoom {
-  box-shadow: var(--plate-offset) var(--plate-offset) 0 0 var(--dl-plate);
+  box-shadow: var(--plate-offset) var(--plate-offset) 0 0 var(--dl-plate), calc(2 * var(--plate-offset)) calc(2 * var(--plate-offset)) 0 0 var(--dl-heat-2);
 }
 
 /*
@@ -1227,7 +1213,7 @@ main.bands {
 .band-after-breakout {
   padding-top: calc(var(--section-y) + var(--after-overlap));
 }
-/* Phones: the figure starts at the text's edge and its plate ends at the gutter (the figure is narrowed by the offset). */
+/* Phones: the figure starts at the text's edge and its outer plate ends at the gutter (the figure is narrowed by both). */
 @media (max-width: 719.98px) {
   .shot,
   .hero-shot {
@@ -1246,9 +1232,9 @@ main.bands {
     justify-self: center;
     margin-bottom: calc(-1 * (var(--section-y) + var(--ribbon-space)));
   }
-  /* Today's capture starts at least 160 px below the hero's plate, so the two Day Arc cards don't read as a pair. */
+  /* Today's capture starts at least 160 px below the hero's outer plate, so the two Day Arc cards don't read as a pair. */
   .hero + .chapters > .band-after-breakout:first-child {
-    padding-top: calc(160px + var(--plate-offset));
+    padding-top: calc(160px + 2 * var(--plate-offset));
   }
   /* Beside its text the Privacy capture is centred, with no breakout, so Plus needs no extra room. */
   .breakout {
@@ -1278,15 +1264,24 @@ main.bands {
   pointer-events: none;
 }
 /*
- * Phones: where a capture ends the chapter, the seam sits 28 px below its plate (the rest of the gap is below the seam),
- * and the chapter keeps a little more room for it.
+ * Phones: where a capture ends the chapter, the seam sits 28 px below its outer plate (the rest of the gap is below the
+ * seam), and the chapter keeps room for both plates, so the gap below the seam is no smaller than with one plate.
  */
 @media (max-width: 719.98px) {
   .has-horizon:has(> .wrap > .shot) {
-    --seam-room: 24px;
+    --seam-room: calc(16px + 2 * var(--plate-offset));
   }
   .has-horizon:has(> .wrap > .shot) > .seam {
-    bottom: calc(var(--section-y) + var(--seam-room) - var(--plate-offset) - 28px - var(--seam-h));
+    bottom: calc(var(--section-y) + var(--seam-room) - 2 * var(--plate-offset) - 28px - var(--seam-h));
+  }
+}
+/*
+ * From 720 px the seam stays centred in the gap, and a chapter with a capture keeps 48 px more of it, so the outer plate
+ * clears the seam even at the low end of the capture's drift (job 20261104-site-sky-mobile).
+ */
+@media (min-width: 720px) {
+  .has-horizon:has(> .wrap > .shot) {
+    --seam-room: 48px;
   }
 }
 .horizon {
@@ -1349,10 +1344,23 @@ main.bands {
   }
 }
 
-/* Scroll depth: the plate slides out from behind its capture as the figure comes into view. Without support, it's static. */
+/*
+ * Scroll depth. Each plate slides out from behind its capture as the figure comes into view: plate 1 from under the
+ * capture to one offset, plate 2 from one offset to two, so the stack fans out. On Home each capture (not the hero's)
+ * also drifts 40 px against its text across its whole view range, from 20 px low to 20 px high, so it reads as a layer
+ * in front of the page (Stephen, 4 Nov 2026). Without scroll timelines, or with reduced motion, all of it is static.
+ */
 @keyframes plate-rise {
   from { translate: 0 0; }
   to { translate: var(--plate-offset) var(--plate-offset); }
+}
+@keyframes plate-fan {
+  from { translate: var(--plate-offset) var(--plate-offset); }
+  to { translate: calc(2 * var(--plate-offset)) calc(2 * var(--plate-offset)); }
+}
+@keyframes capture-drift {
+  from { translate: 0 20px; }
+  to { translate: 0 -20px; }
 }
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
@@ -1361,9 +1369,16 @@ main.bands {
       animation-timeline: view();
       animation-range: entry 10% cover 40%;
     }
-    /* The sky's Pause button stops this too: one control for all the page's motion. */
-    :root:has(.sky-toggle.is-paused) .shot::before {
-      animation: none;
+    .shot::after {
+      animation: plate-fan linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 40%;
+    }
+    #features .shot,
+    #privacy .shot {
+      animation: capture-drift linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
     }
   }
 }

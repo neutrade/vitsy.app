@@ -1,7 +1,8 @@
 /*
  * vitsy.app: the Day Arc sky (job 20261104-site-overhaul). A canvas port of the app's
  * src/features/today/arc/ambientSkyModel.ts at 4089fde2 (D1908, D1924, D1928); names as in the app. Website
- * adaptations and the rules it keeps: site/README.md "The sky". sky.test.ts pins it to the app.
+ * adaptations and the rules it keeps: site/README.md "The sky". sky.test.ts pins it to the app. It draws the hero by
+ * the visitor's clock, and each closing night band (job 20261104-site-sky-mobile) always at night.
  */
 (() => {
 'use strict';
@@ -55,19 +56,15 @@ const TAU = Math.PI * 2;
 const PALETTE = { day: [], glint: '', glintCore: '', star: '' };
 const SKY_TIMES = { dawnFrom: 330, dawnTo: 420, duskFrom: 1170, duskTo: 1260 };
 
-const FIELD_AREA = 60000;
-const FIELD_AREA_LARGE = 35000;
-const STRIP_FIELD_AREA = 15000;
-const STRIP_FIELDS_MIN = 2;
-const MAX_FIELDS = 4;
-const MAX_FIELDS_LARGE = 8;
+const FIELD_AREA = 37500;
+const MAX_FIELDS = 8;
 const WIDE_FROM_PX = 720;
-const WIDE_FIELDS_MIN = 8;
 const FIELD_SEED_STEP = 0x10000;
 const LARGE_FROM_PX = 1024;
 const LARGE_SCALE = 1.3;
 const LARGE_STAR_SCALE = 1.6;
-const STRIP_SCALE = 1.3;
+const BOX = 'figure, .button';
+const SKY_CLASS = 'has-sky';
 const FEATHER = 16;
 const DPR_MAX = 2;
 const REBUILD_MS = 150;
@@ -235,13 +232,11 @@ function shotTrail(s, age) {
 }
 
 // 3. Geometry
-function makeGeometry(W, H, size, ribbon, rects, top, starSize = size) {
-  let lineY = () => H;
+function makeGeometry(W, H, size, starSize, ribbon, rects, foot = H) {
+  let lineY = () => foot;
   let cx = W / 2;
-  rects = rects.map((q) => ({ ...q, y: q.y - top }));
   if (ribbon) {
-    const { x: bx, w: bw, h: bh, yb, yc, stroke } = ribbon;
-    const by = ribbon.y - top;
+    const { x: bx, y: by, w: bw, h: bh, yb, yc, stroke } = ribbon;
     cx = bx + bw / 2;
     lineY = (x) => {
       const u = (x - bx) / bw;
@@ -263,7 +258,7 @@ function makeGeometry(W, H, size, ribbon, rects, top, starSize = size) {
     }
     return k;
   };
-  return { W, H, size, starSize, top, cx, lineY, ceilAt, clearOfText };
+  return { W, H, size, starSize, cx, lineY, ceilAt, clearOfText };
 }
 function dotRMax(g, s) {
   return s.z * DOT_SCALE * g.size;
@@ -363,10 +358,10 @@ function disc(ctx, x, y, r) {
   ctx.arc(x, y, r, 0, TAU);
   ctx.fill();
 }
-function draw(ctx, scene, t, n) {
+function draw(ctx, scene, t, n, still) {
   const g = scene.g;
-  ctx.setTransform(scene.dpr, 0, 0, scene.dpr, 0, g.top * scene.dpr);
-  ctx.clearRect(0, -g.top, g.W, scene.heroH);
+  ctx.setTransform(scene.dpr, 0, 0, scene.dpr, 0, 0);
+  ctx.clearRect(0, 0, g.W, g.H);
   ctx.globalCompositeOperation = 'lighter';
   if (n > 0) {
     for (const f of scene.fields) {
@@ -386,7 +381,7 @@ function draw(ctx, scene, t, n) {
         } else disc(ctx, x, y, r);
       }
     }
-    const shots = n >= SHOT_FROM_N ? shotsFor(scene) : null;
+    const shots = n >= SHOT_FROM_N && !still ? shotsFor(scene) : null;
     const at = shots ? indexAt(shots, t, SHOT_LIFE_S) : -1;
     if (at >= 0) {
       const shot = shots[at];
@@ -419,7 +414,7 @@ function draw(ctx, scene, t, n) {
         disc(ctx, x, y, r);
       }
     }
-    if (n < GLINT_UNTIL_N) {
+    if (n < GLINT_UNTIL_N && !still) {
       for (const f of scene.fields) {
         const at = indexAt(f.glints, t, GLINT_LIFE_S);
         if (at < 0) continue;
@@ -442,12 +437,7 @@ function shotsFor(scene) {
   return scene.shots;
 }
 
-// 5. Host
-const hero = document.getElementById('hero');
-const canvas = hero && hero.querySelector('canvas.hero-sky');
-if (!canvas) return;
-const button = hero.querySelector('.hero-controls .sky-toggle');
-const label = button && button.querySelector('.sky-label');
+// 5. Hosts: the hero (by the clock), each night band (always night)
 if (typeof IntersectionObserver !== 'function' || typeof ResizeObserver !== 'function' || typeof matchMedia !== 'function') return;
 const off = matchMedia('(prefers-contrast: more), (forced-colors: active), print');
 const reduce = matchMedia('(prefers-reduced-motion: reduce)');
@@ -460,7 +450,7 @@ const fieldSeeds = (j) => {
     const day = daySeeds(SEEDS.dots + step);
     const night = nightSeeds(SEEDS.stars + step);
     for (const [list, n, range] of [[day, DAY_DOT_COUNT, DOT_BX], [night, NIGHT_STAR_COUNT, STAR_X]]) {
-      const shift = (j * (range.max - range.min)) / (n - 1) / MAX_FIELDS_LARGE;
+      const shift = (j * (range.max - range.min)) / (n - 1) / MAX_FIELDS;
       for (const seed of list) seed.bx += seed.bx < 0.5 ? shift : -shift;
     }
     if (j > 0) for (const seed of night) seed.v = 0.06 + ((seed.v - 0.06) / 0.44) * 0.92;
@@ -468,222 +458,235 @@ const fieldSeeds = (j) => {
   }
   return seedCache[j];
 };
-
-let ctx = null;
-let dead = false;
-let onScreen = false;
-let choice = null;
-let dirty = true;
-let scene = null;
-let key = '';
-let t = 0;
-let n = 0;
-let clockAt = 0;
-let raf = 0;
-let timer = 0;
-let last = -1;
-let rebuildTimer = 0;
-let observing = false;
-
-const io = new IntersectionObserver((entries) => {
-  onScreen = entries[entries.length - 1].isIntersecting;
-  update();
-});
-const ro = new ResizeObserver(() => markDirty());
-
-const wantsMotion = () => (choice ? choice === 'play' : !reduce.matches);
-const allowed = () => !dead && !off.matches && !!ctx && canvas.getClientRects().length > 0;
-const running = () => allowed() && wantsMotion() && onScreen && !document.hidden;
-
-function readClock() {
-  const d = new Date();
-  n = nightness(d.getHours() * 60 + d.getMinutes());
+function readPalette() {
+  if (PALETTE.star) return true;
+  const cs = getComputedStyle(document.documentElement);
+  const v = (name) => cs.getPropertyValue(name).trim();
+  const day = [v('--dl-sky-day-0'), v('--dl-sky-day-1'), v('--dl-sky-day-2')];
+  const rest = [v('--dl-sky-glint'), v('--dl-sky-glint-core'), v('--dl-sky-star')];
+  if (![...day, ...rest].every(Boolean)) return false;
+  [PALETTE.day, PALETTE.glint, PALETTE.glintCore, PALETTE.star] = [day, ...rest];
+  return true;
 }
-function checkClock() {
-  if (t - clockAt >= CLOCK_EVERY_S || t < clockAt) {
-    clockAt = t;
-    const was = n;
-    readClock();
-    if (was < SHOT_FROM_N && n >= SHOT_FROM_N) scene.shots = null;
-  }
-}
-function start() {
-  if (raf || timer || !running()) return;
-  readClock();
-  last = -1;
-  raf = requestAnimationFrame(frame);
-}
-function stop() {
-  if (raf) cancelAnimationFrame(raf);
-  if (timer) clearTimeout(timer);
-  raf = timer = 0;
-  last = -1;
-}
-function frame(now) {
-  raf = 0;
-  if (last < 0) {
-    last = now;
-    arm();
-    return;
-  }
-  const dt = now - last;
-  last = now;
-  t += Math.min(MAX_ADVANCE_MS, Math.max(0, dt)) / 1000;
-  checkClock();
-  draw(ctx, scene, t, n);
-  arm();
-}
-function arm() {
-  if (!running()) return;
-  if (n >= SHOT_FROM_N && skyFlying(shotsFor(scene), t)) raf = requestAnimationFrame(frame);
-  else
-    timer = setTimeout(() => {
-      timer = 0;
-      raf = requestAnimationFrame(frame);
-    }, FRAME_MS - 3);
-}
-function markDirty() {
-  dirty = true;
-  if (rebuildTimer) clearTimeout(rebuildTimer);
-  rebuildTimer = 0;
-  if (allowed() && onScreen) {
-    rebuildTimer = setTimeout(() => {
-      rebuildTimer = 0;
-      update();
-    }, REBUILD_MS);
-  }
-}
-function readRibbon(box) {
-  const svg = [...hero.querySelectorAll('svg.hero-ribbon')].find((el) => el.getClientRects().length > 0);
-  const path = svg && svg.querySelector('path');
-  if (!path) return null;
-  const m = RIBBON_D.exec(path.getAttribute('d') || '');
-  if (!m) return null;
-  const r = svg.getBoundingClientRect();
-  const stroke = parseFloat(getComputedStyle(path).strokeWidth) || 0;
-  return { x: r.left - box.left, y: r.top - box.top, w: r.width, h: r.height, yb: Number(m[1]), yc: Number(m[2]), stroke };
-}
-function rebuild() {
-  const box = hero.getBoundingClientRect();
-  const W = box.width;
-  const H = box.height;
-  const dpr = Math.min(DPR_MAX, devicePixelRatio || 1);
-  const ribbon = readRibbon(box);
-  const rects = [...hero.querySelectorAll('[data-sky-avoid]')]
-    .map((el) => el.getBoundingClientRect())
-    .filter((q) => q.width > 0 && q.height > 0)
-    .map((q) => ({ x: q.left - box.left, y: q.top - box.top, w: q.width, h: q.height }));
-  const stripEl = hero.querySelector('.hero-strip');
-  const sq = stripEl && stripEl.getClientRects().length ? stripEl.getBoundingClientRect() : null;
-  const strip = sq && sq.height > 0 ? { top: sq.top - box.top, h: sq.height } : null;
-  const next = JSON.stringify([W, H, dpr, ribbon, rects, strip]);
-  dirty = false;
-  if (next === key && scene) return;
-  key = next;
-  canvas.width = Math.round(W * dpr);
-  canvas.height = Math.round(H * dpr);
-  const top = strip ? strip.top : 0;
-  const bandH = strip ? strip.h : H;
-  const large = !strip && W >= LARGE_FROM_PX;
-  const size = strip ? STRIP_SCALE : large ? LARGE_SCALE : 1;
-  const g = makeGeometry(W, bandH, size, ribbon, rects, top, large ? LARGE_STAR_SCALE : size);
-  let sky = W * ((g.lineY(0) + g.lineY(g.cx)) / 2);
-  if (!strip) {
-    for (const q of rects) {
-      const x0 = Math.max(0, q.x - FEATHER);
-      const x1 = Math.min(W, q.x + q.w + FEATHER);
-      const y0 = Math.max(0, q.y - FEATHER);
-      const y1 = Math.min(H, q.y + q.h + FEATHER);
-      sky -= Math.max(0, x1 - x0) * Math.max(0, y1 - y0);
+const wantsMotion = () => !reduce.matches;
+// Below 720 px: clear of each text line, button and capture
+function lineBoxes(el, range, out) {
+  for (const c of el.childNodes) {
+    if (c.nodeType === 3) {
+      range.selectNodeContents(c);
+      out.push(...range.getClientRects());
+    } else if (c.nodeType === 1) {
+      if (c.matches(BOX)) out.push(c.getBoundingClientRect());
+      else lineBoxes(c, range, out);
     }
   }
-  const per = strip ? STRIP_FIELD_AREA : W >= WIDE_FROM_PX ? FIELD_AREA_LARGE : FIELD_AREA;
-  const min = strip ? STRIP_FIELDS_MIN : W >= WIDE_FROM_PX ? WIDE_FIELDS_MIN : 1;
-  const count = Math.min(W >= WIDE_FROM_PX ? MAX_FIELDS_LARGE : MAX_FIELDS, Math.max(min, Math.round(sky / per)));
-  const fields = [];
-  for (let j = 0; j < count; j++) {
-    const s = fieldSeeds(j);
-    fields.push({ day: s.day, night: s.night, glints: skyGlints(g, s.day, s.plans) });
-  }
-  scene = { g, dpr, fields, shots: null, heroH: H };
-  draw(ctx, scene, t, n);
-}
-function setButton(ready) {
-  if (!button) return;
-  button.classList.toggle('is-ready', ready);
-  button.classList.toggle('is-paused', !wantsMotion());
-  if (label) label.textContent = wantsMotion() ? 'Pause animation' : 'Play animation';
-}
-function kill() {
-  dead = true;
-  stop();
-  io.disconnect();
-  ro.disconnect();
-  setButton(false);
-}
-function update() {
-  if (dead) return;
-  if (off.matches) {
-    stop();
-    if (rebuildTimer) clearTimeout(rebuildTimer);
-    rebuildTimer = 0;
-    if (observing) {
-      io.disconnect();
-      ro.disconnect();
-      observing = false;
-    }
-    onScreen = false;
-    canvas.width = canvas.height = 0;
-    scene = null;
-    key = '';
-    dirty = true;
-    setButton(false);
-    return;
-  }
-  if (!observing) {
-    observing = true;
-    io.observe(hero);
-    ro.observe(hero);
-    for (const el of hero.querySelectorAll('[data-sky-avoid]')) ro.observe(el);
-  }
-  if (!onScreen) {
-    stop();
-    return;
-  }
-  if (!ctx) {
-    ctx = canvas.getContext('2d');
-    if (!ctx) return kill();
-    const cs = getComputedStyle(document.documentElement);
-    const v = (name) => cs.getPropertyValue(name).trim();
-    PALETTE.day = [v('--dl-sky-day-0'), v('--dl-sky-day-1'), v('--dl-sky-day-2')];
-    PALETTE.glint = v('--dl-sky-glint');
-    PALETTE.glintCore = v('--dl-sky-glint-core');
-    PALETTE.star = v('--dl-sky-star');
-    if (![...PALETTE.day, PALETTE.glint, PALETTE.glintCore, PALETTE.star].every(Boolean)) return kill();
-    readClock();
-  }
-  if (canvas.getClientRects().length === 0) {
-    stop();
-    setButton(false);
-    return;
-  }
-  if (dirty || !scene) rebuild();
-  setButton(true);
-  if (running()) start();
-  else stop();
+  return out;
 }
 
-if (button) {
-  button.addEventListener('click', () => {
-    choice = wantsMotion() ? 'pause' : 'play';
+function host(el, canvas, night) {
+  let ctx = null;
+  let dead = false;
+  let onScreen = false;
+  let dirty = true;
+  let scene = null;
+  let key = '';
+  let t = 0;
+  let n = night ? 1 : 0;
+  let clockAt = 0;
+  let raf = 0;
+  let timer = 0;
+  let last = -1;
+  let rebuildTimer = 0;
+  let observing = false;
+
+  const io = new IntersectionObserver((entries) => {
+    onScreen = entries[entries.length - 1].isIntersecting;
     update();
   });
+  const ro = new ResizeObserver(() => markDirty());
+  const allowed = () => !dead && !off.matches && !!ctx && canvas.getClientRects().length > 0;
+  const running = () => allowed() && wantsMotion() && onScreen && !document.hidden;
+  const mark = (on) => el.classList.toggle(SKY_CLASS, on);
+
+  function readClock() {
+    if (night) return;
+    const d = new Date();
+    n = nightness(d.getHours() * 60 + d.getMinutes());
+  }
+  function checkClock() {
+    if (t - clockAt >= CLOCK_EVERY_S || t < clockAt) {
+      clockAt = t;
+      const was = n;
+      readClock();
+      if (was < SHOT_FROM_N && n >= SHOT_FROM_N) scene.shots = null;
+    }
+  }
+  function start() {
+    if (raf || timer || !running()) return;
+    readClock();
+    last = -1;
+    raf = requestAnimationFrame(frame);
+  }
+  function stop() {
+    const was = raf || timer;
+    if (raf) cancelAnimationFrame(raf);
+    if (timer) clearTimeout(timer);
+    raf = timer = 0;
+    last = -1;
+    return was;
+  }
+  function frame(now) {
+    raf = 0;
+    if (last < 0) {
+      last = now;
+      arm();
+      return;
+    }
+    const dt = now - last;
+    last = now;
+    t += Math.min(MAX_ADVANCE_MS, Math.max(0, dt)) / 1000;
+    checkClock();
+    draw(ctx, scene, t, n);
+    arm();
+  }
+  function arm() {
+    if (!running()) return;
+    if (n >= SHOT_FROM_N && skyFlying(shotsFor(scene), t)) raf = requestAnimationFrame(frame);
+    else
+      timer = setTimeout(() => {
+        timer = 0;
+        raf = requestAnimationFrame(frame);
+      }, FRAME_MS - 3);
+  }
+  function markDirty() {
+    dirty = true;
+    if (rebuildTimer) clearTimeout(rebuildTimer);
+    rebuildTimer = 0;
+    if (allowed() && onScreen) {
+      rebuildTimer = setTimeout(() => {
+        rebuildTimer = 0;
+        update();
+      }, REBUILD_MS);
+    }
+  }
+  function readRibbon(box) {
+    const svg = [...el.querySelectorAll('svg.hero-ribbon')].find((x) => x.getClientRects().length > 0);
+    const path = svg && svg.querySelector('path');
+    if (!path) return null;
+    const m = RIBBON_D.exec(path.getAttribute('d') || '');
+    if (!m) return null;
+    const r = svg.getBoundingClientRect();
+    const stroke = parseFloat(getComputedStyle(path).strokeWidth) || 0;
+    return { x: r.left - box.left, y: r.top - box.top, w: r.width, h: r.height, yb: Number(m[1]), yc: Number(m[2]), stroke };
+  }
+  function rebuild() {
+    const box = el.getBoundingClientRect();
+    const W = box.width;
+    const H = box.height;
+    const dpr = Math.min(DPR_MAX, devicePixelRatio || 1);
+    const ribbon = night ? null : readRibbon(box);
+    const wide = W >= WIDE_FROM_PX;
+    const range = wide ? null : document.createRange();
+    // A capture's box takes in its plates (::after offset)
+    const rects = [...el.querySelectorAll('[data-sky-avoid]')]
+      .flatMap((a) => {
+        if (!a.matches(BOX)) return wide ? [a.getBoundingClientRect()] : lineBoxes(a, range, []);
+        const q = a.getBoundingClientRect();
+        const k = parseFloat(getComputedStyle(a, '::after').translate) || 0;
+        return [{ left: q.left, top: q.top, width: q.width + k, height: q.height + k }];
+      })
+      .filter((q) => q.width > 0 && q.height > 0)
+      .map((q) => ({ x: q.left - box.left, y: q.top - box.top, w: q.width, h: q.height }));
+    const next = JSON.stringify([W, H, dpr, ribbon, rects]);
+    dirty = false;
+    if (next === key && scene) return;
+    key = next;
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    const lift = !wide || W >= LARGE_FROM_PX;
+    // Phones: a box past the foot (the breakout capture) is the line
+    const foot = Math.min(H, ...rects.filter((q) => !wide && q.y + q.h > H).map((q) => q.y));
+    const g = makeGeometry(W, H, lift ? LARGE_SCALE : 1, lift ? LARGE_STAR_SCALE : 1, ribbon, rects, foot);
+    // Phones: a field per 375 x 100 px of canvas, 1 to 8
+    const count = wide ? MAX_FIELDS : Math.min(MAX_FIELDS, Math.max(1, Math.floor((W * H) / FIELD_AREA)));
+    const fields = [];
+    for (let j = 0; j < count; j++) {
+      const f = fieldSeeds(j);
+      fields.push({ day: f.day, night: f.night, glints: night ? [] : skyGlints(g, f.day, f.plans) });
+    }
+    scene = { g, dpr, fields, shots: null };
+    draw(ctx, scene, t, n, !wantsMotion());
+  }
+  function kill() {
+    dead = true;
+    stop();
+    io.disconnect();
+    ro.disconnect();
+    mark(false);
+  }
+  function update() {
+    if (dead) return;
+    if (off.matches) {
+      stop();
+      if (rebuildTimer) clearTimeout(rebuildTimer);
+      rebuildTimer = 0;
+      if (observing) {
+        io.disconnect();
+        ro.disconnect();
+        observing = false;
+      }
+      onScreen = false;
+      canvas.width = canvas.height = 0;
+      scene = null;
+      key = '';
+      dirty = true;
+      mark(false);
+      return;
+    }
+    if (!observing) {
+      observing = true;
+      io.observe(el);
+      ro.observe(el);
+      for (const a of el.querySelectorAll('[data-sky-avoid]')) ro.observe(a);
+    }
+    if (!onScreen) {
+      stop();
+      return;
+    }
+    if (!ctx) {
+      ctx = canvas.getContext('2d');
+      if (!ctx || !readPalette()) return kill();
+      readClock();
+    }
+    if (canvas.getClientRects().length === 0) {
+      stop();
+      mark(false);
+      return;
+    }
+    if (dirty || !scene) rebuild();
+    mark(true);
+    if (running()) start();
+    // Reduced motion mid-flight: a still frame
+    else if (stop() && !wantsMotion()) draw(ctx, scene, t, n, true);
+  }
+  return { update, markDirty };
 }
-off.addEventListener('change', update);
-reduce.addEventListener('change', update);
-document.addEventListener('visibilitychange', update);
-addEventListener('pageshow', update);
-if (document.fonts && document.fonts.ready) document.fonts.ready.then(markDirty);
-if (document.readyState === 'loading' || document.readyState === 'interactive') addEventListener('load', update, { once: true });
-else update();
+
+const hosts = [];
+const hero = document.getElementById('hero');
+const heroSky = hero && hero.querySelector('canvas.hero-sky');
+if (heroSky) hosts.push(host(hero, heroSky, false));
+for (const band of document.querySelectorAll('.band-night')) {
+  const sky = band.querySelector('canvas.night-sky');
+  if (sky) hosts.push(host(band, sky, true));
+}
+if (!hosts.length) return;
+const updateAll = () => hosts.forEach((h) => h.update());
+off.addEventListener('change', updateAll);
+reduce.addEventListener('change', updateAll);
+document.addEventListener('visibilitychange', updateAll);
+addEventListener('pageshow', updateAll);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => hosts.forEach((h) => h.markDirty()));
+if (document.readyState === 'loading' || document.readyState === 'interactive') addEventListener('load', updateAll, { once: true });
+else updateAll();
 })();
