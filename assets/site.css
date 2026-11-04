@@ -547,15 +547,33 @@ h2,
   --crop-ratio: 750 / 700;
   --crop-y: 21.05%;
 }
+/*
+ * The hero capture beside the text (fix-site-layers rework 1). Each crop starts and ends on a clean line of the capture
+ * and is about as tall as the hero's text plus the band's bottom padding in its range, so it reaches the arc without
+ * stretching: the whole screen up to 815 px; from under the status bar to the screen's foot up to 927 px; from under
+ * the status bar to the gap between Omega-3 and Iron (1,370 of 1,629 px) from 928 px.
+ */
+@media (min-width: 720px) and (max-width: 815.98px) {
+  .crop-hero {
+    --crop-ratio: 750 / 1629;
+    --crop-y: 0%;
+  }
+}
+@media (min-width: 816px) and (max-width: 927.98px) {
+  .crop-hero {
+    --crop-ratio: 750 / 1515;
+    --crop-y: 100%;
+  }
+}
+@media (min-width: 928px) {
+  .crop-hero {
+    --crop-ratio: 750 / 1256;
+    --crop-y: 30.56%;
+  }
+}
 /* Home's chapter links to the feature pages. */
 .more-link {
   font-weight: 600;
-}
-@media (min-width: 720px) {
-  .crop-hero {
-    --crop-ratio: 750 / 753;
-    --crop-y: 13.02%;
-  }
 }
 /*
  * Rework 1: a capture whose sheet sits on a dimmed backdrop is zoomed slightly inside its rounded figure, so the grey
@@ -573,11 +591,14 @@ h2,
   border: 0;
   border-radius: 0;
 }
-/* A figure is never wider than the capture at 2x, so it never upscales on a retina screen. */
+/*
+ * A figure is never wider than the capture at 2x, so it never upscales on a retina screen. It leaves room for its plate
+ * (see Layers), so the plate never runs into the gutter.
+ */
 .shot,
 .hero-shot {
   margin: 0;
-  width: min(100%, 23.4375rem);
+  width: min(100% - var(--plate-offset), 23.4375rem);
   justify-self: center;
 }
 
@@ -839,13 +860,15 @@ main.bands {
   outline-color: var(--dl-accent);
 }
 @media (min-width: 720px) {
+  /* Text and capture share a top edge (fix-site-layers): when the capture is the taller, the text stays level with it. */
   .hero-grid {
     grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
     column-gap: var(--sp-3xl);
-    align-items: center;
+    align-items: start;
   }
+  /* Centred in its column like every chapter's capture, so the hero and Today captures share a left edge. */
   .hero-shot {
-    justify-self: end;
+    justify-self: center;
   }
 }
 
@@ -1145,16 +1168,15 @@ main.bands {
 :root {
   --plate-offset: clamp(10px, 0.5vw + 8px, 16px);
   --overlap: clamp(24px, 3vw + 14px, 56px);
-  /* How much extra room the band below a breakout needs: all of it when the columns stack, half beside them. */
+  /* How much extra room the band below a breakout needs when the columns stack (beside the text there's no breakout). */
   --after-overlap: var(--overlap);
-  --seam-h: 24px;
+  /* A seam is as tall as its capsule; the level line runs through the middle. */
+  --seam-h: 12px;
   /* Extra space a seam adds under its chapter; none from 1024 px, where the gap already holds it. */
   --seam-room: 16px;
 }
 @media (min-width: 720px) {
   :root {
-    --after-overlap: calc(var(--overlap) / 2);
-    --seam-h: 32px;
     --seam-room: 12px;
   }
 }
@@ -1190,7 +1212,10 @@ main.bands {
   box-shadow: var(--plate-offset) var(--plate-offset) 0 0 var(--dl-plate);
 }
 
-/* Breakouts: the hero and Privacy captures cross their teal band's lower edge into the cream band below, which makes room. */
+/*
+ * Breakouts. When the columns stack, the hero and Privacy captures come last and cross their teal band's lower edge into
+ * the cream band below, which makes room. (Fix-site-layers: no capture is bottom-aligned beside its text any more.)
+ */
 .breakout,
 .hero-shot {
   z-index: 3;
@@ -1199,20 +1224,46 @@ main.bands {
 .hero-shot {
   margin-bottom: calc(-1 * (var(--section-y) + var(--ribbon-space) + var(--overlap)));
 }
-@media (min-width: 720px) {
-  .breakout,
-  .hero-shot {
-    align-self: end;
-  }
-}
 .band-after-breakout {
   padding-top: calc(var(--section-y) + var(--after-overlap));
 }
+/* Phones: the figure starts at the text's edge and its plate ends at the gutter (the figure is narrowed by the offset). */
+@media (max-width: 719.98px) {
+  .shot,
+  .hero-shot {
+    justify-self: start;
+  }
+}
+@media (min-width: 720px) {
+  /*
+   * Beside the headline, the hero capture starts level with the text. Its negative margin (the band's bottom padding)
+   * lets it hang over the arc to the hero's lower edge; when it's taller than the text plus that padding, the band
+   * grows to it and it still ends at the edge. Its crop is fixed (rework 1: a capture stretched to the row was cut
+   * wherever the row ended, often through a line of text), so the figure and its plate end where the image ends.
+   */
+  .hero-shot {
+    align-self: start;
+    justify-self: center;
+    margin-bottom: calc(-1 * (var(--section-y) + var(--ribbon-space)));
+  }
+  /* Today's capture starts at least 160 px below the hero's plate, so the two Day Arc cards don't read as a pair. */
+  .hero + .chapters > .band-after-breakout:first-child {
+    padding-top: calc(160px + var(--plate-offset));
+  }
+  /* Beside its text the Privacy capture is centred, with no breakout, so Plus needs no extra room. */
+  .breakout {
+    align-self: center;
+    margin-bottom: 0;
+  }
+  .band-after-breakout {
+    padding-top: var(--section-y);
+  }
+}
 
 /*
- * Horizon seams (Home): one at the foot of each feature chapter, in the gap before the next, never under text. Each
- * line runs between heights fixed in its viewBox, and each starts where the last ended, so together they rise and set
- * like the Day Arc at every width. A capsule marker moves left to right through the day; the moon ends it.
+ * Horizon seams (Home): one at the foot of each feature chapter, in the gap before the next, never under text. Each is
+ * a level line (a gentle rise across a wide page read as a crooked rule; fix-site-layers), so the markers carry the day:
+ * a capsule moves left to right through the day, chapter by chapter, and the moon ends it.
  */
 .has-horizon {
   position: relative;
@@ -1225,6 +1276,18 @@ main.bands {
   bottom: calc((var(--section-y) + var(--seam-room) - var(--seam-h)) / 2);
   height: var(--seam-h);
   pointer-events: none;
+}
+/*
+ * Phones: where a capture ends the chapter, the seam sits 28 px below its plate (the rest of the gap is below the seam),
+ * and the chapter keeps a little more room for it.
+ */
+@media (max-width: 719.98px) {
+  .has-horizon:has(> .wrap > .shot) {
+    --seam-room: 24px;
+  }
+  .has-horizon:has(> .wrap > .shot) > .seam {
+    bottom: calc(var(--section-y) + var(--seam-room) - var(--plate-offset) - 28px - var(--seam-h));
+  }
 }
 .horizon {
   position: absolute;
@@ -1241,9 +1304,11 @@ main.bands {
   vector-effect: non-scaling-stroke;
   opacity: 0.55;
 }
+/* Level lines, so the markers carry the day: each sits on the line, a capsule stepping left to right, then the moon. */
 .horizon-marker,
 .horizon-moon {
   position: absolute;
+  top: 50%;
   translate: -50% -50%;
 }
 .horizon-marker {
@@ -1259,30 +1324,24 @@ main.bands {
   border-radius: 50%;
   box-shadow: inset 6px -3px 0 0 var(--dl-accent);
 }
-/* Where each marker sits on its seam's line (x, then the line's height there, as shares of the seam). */
+/* Where each marker sits along its seam's line, as a share of the width. */
 .horizon-marker--1 {
   left: 15%;
-  top: 79.6%;
 }
 .horizon-marker--2 {
   left: 32%;
-  top: 40.7%;
 }
 .horizon-marker--3 {
   left: 50%;
-  top: 17.4%;
 }
 .horizon-marker--4 {
   left: 68%;
-  top: 19.9%;
 }
 .horizon-marker--5 {
   left: 85%;
-  top: 45.6%;
 }
 .seam--6 .horizon-moon {
   left: 85%;
-  top: 79.6%;
 }
 @media (forced-colors: active), print {
   .seam {
