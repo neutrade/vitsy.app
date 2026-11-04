@@ -2,12 +2,22 @@
 <html lang="en-GB" data-theme="light">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Vitsy: everything you take, in one place</title>
-<meta name="description" content="Vitsy keeps track of your supplements and medicines on your phone. Reminders, a clear view of today, and your history. No account needed.">
+<title>Vitsy: supplement and medication tracker, no account</title>
+<meta name="description" content="Vitamins, supplements, tablets and injections on one list, with reminders, stock and history. Free for up to 3 items. No account; data stays on your phone.">
+<link rel="canonical" href="https://vitsy.app/">
 <meta name="color-scheme" content="light">
+<link rel="preload" href="/assets/fonts/fraunces-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" href="/assets/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/assets/tokens.css">
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/sky.js" defer></script>
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Vitsy">
+<meta property="og:locale" content="en_GB">
 <meta property="og:title" content="Vitsy: everything you take, in one place">
 <meta property="og:description" content="Supplements and medicines on one list, with reminders, stock and your history. Free for up to 3 items. No account needed.">
 <meta property="og:url" content="https://vitsy.app/">
@@ -16,19 +26,17 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Everything you take, in one place: Vitsy's Day Arc on Thursday 5 November, showing 3 of 7 logged and 18 days on plan.">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="/favicon.png" type="image/png">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="stylesheet" href="/assets/tokens.css">
-<link rel="stylesheet" href="/assets/site.css">
+<meta name="twitter:image:alt" content="Everything you take, in one place: Vitsy's Day Arc on Thursday 5 November, showing 3 of 7 logged and 18 days on plan.">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://vitsy.app/#website","name":"Vitsy","alternateName":["Vitsy app","vitsy.app"],"url":"https://vitsy.app/","inLanguage":"en-GB","publisher":{"@id":"https://vitsy.app/#org"}},{"@type":"Organization","@id":"https://vitsy.app/#org","name":"Neutrade Ltd","legalName":"Neutrade Ltd","email":"support@neutrade.co.uk","address":{"@type":"PostalAddress","addressCountry":"GB"},"brand":{"@type":"Brand","name":"Vitsy","logo":"https://vitsy.app/assets/icon-192.png"}},{"@type":"MobileApplication","@id":"https://vitsy.app/#app","name":"Vitsy","alternateName":"Vitsy: Supplement Tracker","url":"https://vitsy.app/","description":"Vitamins, supplements, prescriptions and injections on one list, with reminders that fit your day.","applicationCategory":"HealthApplication","operatingSystem":"iOS, Android","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"},"publisher":{"@id":"https://vitsy.app/#org"},"image":"https://vitsy.app/assets/icon-192.png"},{"@type":"WebPage","@id":"https://vitsy.app/#webpage","url":"https://vitsy.app/","name":"Vitsy: supplement and medication tracker, no account","description":"Vitamins, supplements, tablets and injections on one list, with reminders, stock and history. Free for up to 3 items. No account; data stays on your phone.","inLanguage":"en-GB","isPartOf":{"@id":"https://vitsy.app/#website"},"about":{"@id":"https://vitsy.app/#app"}}]}</script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <header class="site-header">
   <div class="wrap">
-    <a class="brand" href="/"><img src="/assets/icon-128.png" width="36" height="36" alt="">Vitsy</a>
+    <a class="brand" href="/" aria-label="Vitsy home" aria-current="page"><img src="/assets/icon-128.png" width="36" height="36" alt=""><span class="brand-name">Vitsy</span></a>
     <nav class="site-nav" aria-label="Main">
       <ul>
-        <li><a href="/" aria-current="page">Home</a></li>
+        <li><a href="/#features">Features</a></li>
         <li><a href="/pricing/">Plus</a></li>
         <li><a href="/support/">Support</a></li>
       </ul>
@@ -36,220 +44,243 @@
   </div>
 </header>
 
-<main id="main" class="wrap">
-  <section class="hero" aria-labelledby="hero-title">
-    <div class="hero-head">
-      <p class="eyebrow">Supplement and medicine tracker</p>
-      <h1 id="hero-title"><span class="highlight">Everything</span> you take, in one place.</h1>
-    </div>
-    <div class="shots">
-      <picture>
-        <img class="screen" src="/assets/screens/today-light.webp" width="750" height="1629" alt="Today on Thursday 5 November: the Day Arc at 3 of 7 with the Morning marker ticked, 18 days on plan and 96% over the last 30 days, the Morning stack done at 08:15, the B12 injection due by 11:00, and the Evening stack of Omega-3, Iron and Magnesium glycinate.">
-      </picture>
-    </div>
-    <div class="hero-body">
-      <p class="lead">Vitamins, supplements, prescriptions and injections on one list, with reminders, stock and your history. Free for up to 3 items. No account needed, and your data stays on your phone.</p>
-      <div class="actions">
-        <a class="button secondary" href="mailto:support@neutrade.co.uk?subject=Vitsy%3A%20let%20me%20know%20when%20it%20launches&amp;body=Please%20email%20me%20when%20Vitsy%20is%20available.%20I%20use%3A%20iPhone%20%2F%20Android%20(delete%20as%20needed).">Email me when it's out</a>
-        <p class="or-email">or email support@neutrade.co.uk</p>
+<main id="main" class="bands">
+  <section id="hero" class="hero band band-teal" aria-labelledby="hero-title">
+    <canvas class="hero-sky" aria-hidden="true"></canvas>
+    <svg class="hero-ribbon" viewBox="0 0 1000 100" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M0 80 Q500 0 1000 80"/><path class="ribbon-fill" d="M0 80 Q500 0 1000 80 V102 H0 Z"/></svg>
+    <div class="wrap hero-grid">
+      <div class="hero-text">
+        <p class="eyebrow" data-sky-avoid>Supplement and medicine tracker</p>
+        <h1 id="hero-title" data-sky-avoid><span class="highlight">Everything</span> you take, in one place.</h1>
+        <p class="lead" data-sky-avoid>Vitamins, supplements, prescriptions and injections on one list, with reminders that fit your day.</p>
+        <div class="actions" data-sky-avoid>
+          <a class="button secondary" href="mailto:support@neutrade.co.uk?subject=Vitsy%3A%20let%20me%20know%20when%20it%20launches&amp;body=Please%20email%20me%20when%20Vitsy%20is%20available.%20I%20use%3A%20iPhone%20%2F%20Android%20(delete%20as%20needed).">Email me when it's out</a>
+          <p class="or-email">or email support@neutrade.co.uk</p>
+        </div>
+        <div class="proof" data-sky-avoid>
+          <p class="availability">Coming soon for iPhone and Android.</p>
+          <ul class="proof-list"><li>Free for up to 3 items</li><li>No account</li><li>Your records stay on your phone</li></ul>
+        </div>
+        <div class="hero-controls" data-sky-avoid>
+          <button type="button" class="sky-toggle"><svg class="glyph" aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path class="glyph-pause" d="M4 3h3v10H4zM9 3h3v10H9z"/><path class="glyph-play" d="M5 3l8 5-8 5z"/></svg><span class="sky-label">Pause animation</span></button>
+        </div>
       </div>
-      <p class="availability">Coming soon for iPhone and Android.</p>
-      <p class="register-line"><a href="/pricing/">See what Plus adds</a></p>
+      <div class="hero-strip" aria-hidden="true"><svg class="hero-ribbon" viewBox="0 0 1000 100" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M0 80 Q500 0 1000 80"/></svg></div>
+      <figure class="hero-shot" data-sky-avoid>
+        <img class="screen crop crop-hero" src="/assets/screens/today-light.webp" width="750" height="1629" fetchpriority="high" alt="Today on Thursday 5 November: the Day Arc at 3 of 7 with the Morning marker ticked, 18 days on plan and 96% over the last 30 days, the Morning stack done at 08:15, the B12 injection due by 11:00, and the Evening stack of Omega-3, Iron and Magnesium glycinate.">
+      </figure>
     </div>
   </section>
 
-  <section id="features" class="overview" aria-labelledby="features-title">
-    <h2 id="features-title">What Vitsy does</h2>
-    <div class="group">
-      <h3 id="free-group">Free, for up to 3 items</h3>
-      <ul class="tiles" aria-labelledby="free-group">
-        <li class="tile"><a class="tile-title" href="#today">Today and the Day Arc</a><span class="tile-line">What's due, drawn along your day</span></li>
-        <li class="tile"><a class="tile-title" href="#stacks">Stacks and Take all</a><span class="tile-line">One tap logs the whole stack</span></li>
-        <li class="tile"><a class="tile-title" href="#reminders">Reminders as firm as you need</a><span class="tile-line">Gentle, Firm or Persistent, item names kept off the lock screen</span></li>
-        <li class="tile"><a class="tile-title" href="#stock">Stock and reorder</a><span class="tile-line">Days left and the date to order by</span></li>
-        <li class="tile"><a class="tile-title" href="#stock">Schedules that fit</a><span class="tile-line">Cycles, seasons, every few days or as needed</span></li>
-        <li class="tile"><a class="tile-title" href="#stock">Injection sites</a><span class="tile-line">Each site on a body map, with when you last used it</span></li>
-        <li class="tile"><a class="tile-title" href="#history">History and streaks</a><span class="tile-line">A 12-week heat map and days on plan</span></li>
-        <li class="tile"><a class="tile-title" href="#history">Milestones</a><span class="tile-line">71 badges (52 free, 19 with Plus)</span></li>
-        <li class="tile"><a class="tile-title" href="#sleep">Sleep from Apple Health</a><span class="tile-line">Beside each day in the Diary, never stored</span></li>
-        <li class="tile"><a class="tile-title" href="#watch">Apple Watch</a><span class="tile-line">Your next stack, with Taken and Skip</span></li>
-        <li class="tile"><a class="tile-title" href="#watch">Home Screen widgets</a><span class="tile-line">"Next stack" and "History"</span></li>
-        <li class="tile"><a class="tile-title" href="#watch">Siri and Shortcuts</a><span class="tile-line">Log a stack or ask what's next</span></li>
-        <li class="tile"><a class="tile-title" href="#privacy">Private by default</a><span class="tile-line">No account, Export and Delete all data</span></li>
-        <li class="tile"><a class="tile-title" href="/pricing/#stays-free">Always free</a><span class="tile-line keep">Wellbeing support, your past check-ins and sessions, and Apple Health workouts</span></li>
-      </ul>
-    </div>
-    <div class="group plus-group">
-      <h3 id="plus-group">Plus adds</h3>
-      <ul class="tiles" aria-labelledby="plus-group">
-        <li class="tile"><a class="tile-title" href="/pricing/#item-limit">No item limit</a> <span class="badge">Plus</span><span class="tile-line">Track everything you take</span></li>
-        <li class="tile"><a class="tile-title" href="#training">Training</a> <span class="badge">Plus</span><span class="tile-line">A weekly target and your week on Today</span></li>
-        <li class="tile"><a class="tile-title" href="#diary">Diary check-ins</a> <span class="badge">Plus</span><span class="tile-line">Mood and energy out of 5, tags and a note</span></li>
-        <li class="tile"><a class="tile-title" href="#diary">Patterns</a> <span class="badge">Plus</span><span class="tile-line keep">Links between how you felt and your day. A pattern isn't proof that one thing causes the other.</span></li>
-        <li class="tile"><a class="tile-title" href="#diary">The check-in reminder</a> <span class="badge">Plus</span><span class="tile-line">Morning or evening, quiet once you've checked in</span></li>
-      </ul>
-    </div>
-    <p><a href="/pricing/">Compare Free and Plus</a></p>
-  </section>
-
-  <section id="today" class="feature" aria-labelledby="today-title">
-    <div class="text">
-      <h2 id="today-title">Today and the Day Arc</h2>
-      <p>Today opens with the Day Arc: your day drawn as a shallow curve, with a marker for each stack and the sun moving along it to the current minute. In the middle it shows how many you've logged so far.</p>
-      <p>The sky behind the arc changes as the day goes on. After dark the moon takes over and the card turns to night, so the evening stack is easy to find.</p>
-    </div>
-    <div class="shots">
-      <picture>
-        <img class="screen" src="/assets/screens/today-morning-light.webp" width="750" height="1629" loading="lazy" alt="Today before the first stack: the sun low on the left of the Day Arc, 0 of 7 logged, and the Morning stack of Vitamin D3, Calcium and Creatine due by 10:00, with Take all, Log some and Skip all.">
-      </picture>
-    </div>
-  </section>
-
-  <section id="stacks" class="feature" aria-labelledby="stacks-title">
-    <div class="text">
-      <h2 id="stacks-title">Stacks and Take all</h2>
-      <p>Group the things you take at the same time into stacks, such as Morning or With dinner. When you've taken the lot, one tap on Take all logs the whole stack.</p>
-      <p>If you only took some, Log some lets you choose which. Tapped by mistake? Undo puts it back.</p>
-    </div>
-    <div class="shots">
-      <picture>
-        <img class="screen" src="/assets/screens/stack-take-all-light.webp" width="750" height="1629" loading="lazy" alt="Today after one tap on Take all: the Morning stack ticked at 08:15, with a line to undo Take all for Vitamin D3, Calcium and Creatine, and the Day Arc at 3 of 7.">
-      </picture>
-    </div>
-  </section>
-
-  <section id="reminders" class="feature" aria-labelledby="reminders-title">
-    <div class="text">
-      <h2 id="reminders-title">Reminders that suit what you take</h2>
-      <p>Each item has its own reminder strength: Gentle for supplements, Firm for prescriptions and injections, or Persistent if you want more nudging. On iPhone, turn on Time Sensitive and reminders can come through a Focus.</p>
-      <p>Item names stay off your lock screen by default. Notifications show the stack name, like "Morning", and you can hide those too.</p>
-    </div>
-    <div class="shots">
-      <picture>
-        <img class="screen" src="/assets/screens/reminders-light.webp" width="750" height="1629" loading="lazy" alt="An item's Reminders sheet: How firmly set to Firm, a note that medicine names never show on your lock screen, widgets, Watch or Siri, the Remind me to reorder switch, and Reminder health.">
-      </picture>
-    </div>
-  </section>
-
-  <section id="history" class="feature" aria-labelledby="history-title">
-    <div class="text">
-      <h2 id="history-title">History, streaks and milestones</h2>
-      <p>History shows the last 12 weeks as a heat map, one square for each day, shaded by how much of that day you logged. A day with nothing logged just says Not logged.</p>
-      <p>Your streak counts the days you stayed on plan. Reach a milestone, such as 30 days on plan, and you earn a badge to keep. If streaks aren't for you, turn them off.</p>
-    </div>
-    <div class="shots">
-      <picture>
-        <img class="screen" src="/assets/screens/history-heatmap-light.webp" width="750" height="1629" loading="lazy" alt="History: 18 days on plan, a best of 18 days, 96% over the last 30 days, 2 of 2 safety nets in reserve and the next milestone at 30 days, then a 12-week heat map with runs on plan outlined.">
-      </picture>
-      <picture>
-        <img class="screen" src="/assets/screens/milestone-light.webp" width="750" height="1630" loading="lazy" alt="The Milestones page: a year badge at the top, 44 days on plan all told, a best run of 17 days and 52 badges collected, then the Days on plan badges from the first day to a full year.">
-      </picture>
-    </div>
-  </section>
-
-  <section id="diary" class="feature" aria-labelledby="diary-title">
-    <div class="text">
-      <h2 id="diary-title">Diary check-ins and Patterns <span class="badge">Plus</span></h2>
-      <p>Check in from Today or the Diary with how you're feeling: mood and energy out of 5, a few tags, and a note if you want one. Over time, Patterns looks for links between your check-ins and the rest of your day, such as sleep and training, and says so plainly. A pattern isn't proof that one thing causes the other.</p>
-      <p>Patterns are worked out on your phone and never stored or sent anywhere. New check-ins, Patterns and the check-in reminder come with Plus. Your past check-ins stay readable, and the wellbeing support contacts in the Diary are free for everyone.</p>
-    </div>
-    <div class="shots">
-      <picture>
-        <img class="screen" src="/assets/screens/diary-checkin-light.webp" width="750" height="1630" loading="lazy" alt="The check-in card on Today: energy and mood each picked out of 5, Slept well and Focused tags, and a short note, with Save check-in.">
-      </picture>
-      <picture>
-        <img class="screen" src="/assets/screens/diary-patterns-light.webp" width="750" height="1629" loading="lazy" alt="Diary Patterns from your own check-ins: energy and mood were higher on training days than on rest days, and evening energy and evening mood are usually higher after a training day. Each notes it is not proof that one causes the other.">
-      </picture>
-    </div>
-  </section>
-
-  <section id="sleep" class="feature" aria-labelledby="sleep-title">
-    <div class="text">
-      <h2 id="sleep-title">Sleep, from Apple Health</h2>
-      <p>On iPhone, the Diary can show your sleep beside each day. Vitsy reads it from Apple Health with your permission, and only reads: it never writes anything to Health.</p>
-      <p>Your sleep is shown while you look at it and that's all. Vitsy doesn't store it, export it or back it up. Sleep in the Diary is free.</p>
-    </div>
-    <div class="shots">
-      <picture>
-        <img class="screen" src="/assets/screens/diary-sleep-light.webp" width="750" height="1630" loading="lazy" alt="The Diary: yesterday's sleep from Apple Health, with bedtime, wake time and sleep stages, above that day's check-ins.">
-      </picture>
-    </div>
-  </section>
-
-  <section id="training" class="feature" aria-labelledby="training-title">
-    <div class="text">
-      <h2 id="training-title">Training <span class="badge">Plus</span></h2>
-      <p>Set a weekly target, say four sessions, and Today shows your week as a row of dots. Workouts come in from Apple Health on iPhone, or you can log a session yourself.</p>
-      <p>Your training streak counts weeks on target, not days, so a rest day never breaks it.</p>
-    </div>
-    <div class="shots">
-      <picture>
-        <img class="screen" src="/assets/screens/training-light.webp" width="750" height="1629" loading="lazy" alt="Today's Training card on a rest day: no training recorded today, three of four dots filled, 3 of 4 this week and 10 weeks on target, with I've just trained and Log a session.">
-      </picture>
-    </div>
-  </section>
-
-  <section id="privacy" class="feature" aria-labelledby="privacy-title">
-    <div class="text">
-      <h2 id="privacy-title">Private by default</h2>
-      <p>There's no account to make and nothing to sign up for. What you enter is kept on your phone, in an encrypted database.</p>
-      <p>You choose what shows outside the app, and you can export everything or delete everything from Settings whenever you like. <a href="/privacy/">Read the privacy policy</a>.</p>
-    </div>
-    <div class="shots">
-      <picture>
-        <img class="screen" src="/assets/screens/privacy-light.webp" width="750" height="1630" loading="lazy" alt="Settings, Names outside the app: Show names, Stack names only or Hide all names, for the lock screen and notifications.">
-      </picture>
-    </div>
-  </section>
-
-  <section id="watch" class="feature" aria-labelledby="watch-title">
-    <div class="text">
-      <h2 id="watch-title">Apple Watch, widgets and Siri</h2>
-      <p>The Apple Watch app (watchOS 10 or later) shows your next stack with Taken and Skip, and your days on plan. Add a complication, such as the Day Arc, to your watch face.</p>
-      <p>On your iPhone Home Screen, the "Next stack" widget shows what's due next, with a Log button for the whole stack, and the "History" widget shows your last 12 weeks. With Siri or the Shortcuts app you can log a stack, ask what's next, check whether you've taken everything today, or ask how much of something is left. Say "Vitsy" in the phrase, as in "What's next in Vitsy".</p>
-      <p>All of this is free. Widgets and the Watch follow your Names outside the app setting, so item names stay hidden by default.</p>
-    </div>
-  </section>
-
-  <section id="stock" class="feature" aria-labelledby="stock-title">
-    <div class="text">
-      <h2 id="stock-title">Stock, schedules and injection sites</h2>
-      <p>Tell Vitsy how much you have and it works out the days left and the date to order by. Turn on Remind me to reorder and you get a reminder on that date.</p>
-      <p>Schedules go beyond every day: set weekdays, every few days or weeks, a day of the month, on and off cycles such as 5 days on and 2 off, a season of the year, training or rest days, or only when needed.</p>
-      <p>For injections, log the site on a body map that shows when you last used each one. All of this is free.</p>
-    </div>
-  </section>
-
-  <section class="feature" aria-labelledby="free-title">
-    <div class="text">
-      <h2 id="free-title">Start free</h2>
-      <p>Free for up to 3 items. Plus removes the item limit and adds Training, the Diary's check-ins and Patterns, and the check-in reminder.</p>
-      <p>Vitsy is coming soon for iPhone and Android.</p>
-      <div class="actions">
-        <a class="button secondary" href="mailto:support@neutrade.co.uk?subject=Vitsy%3A%20let%20me%20know%20when%20it%20launches&amp;body=Please%20email%20me%20when%20Vitsy%20is%20available.%20I%20use%3A%20iPhone%20%2F%20Android%20(delete%20as%20needed).">Email me when it's out</a>
-        <p class="or-email">or email <a href="mailto:support@neutrade.co.uk">support@neutrade.co.uk</a></p>
+  <div id="features" class="chapters">
+    <section id="today" class="band chapter" aria-labelledby="today-title">
+      <div class="wrap chapter-grid split">
+        <div class="text">
+          <p class="eyebrow">Today and the Day Arc</p>
+          <h2 id="today-title">Your day, drawn as an arc</h2>
+          <p>Today opens with the Day Arc: a shallow curve across your day, with a marker for each stack and the sun moving along it to the current minute. In the middle it shows how many you've logged so far.</p>
+          <p>The sky behind the arc changes as the day goes on. After dark the moon takes over and the card turns to night, so the evening stack is easy to find.</p>
+        </div>
+        <figure class="shot">
+          <img class="screen crop crop-arc" src="/assets/screens/today-morning-light.webp" width="750" height="1629" loading="lazy" alt="Today before the first stack: the sun low on the left of the Day Arc, 0 of 7 logged, and the Morning stack of Vitamin D3, Calcium and Creatine due by 10:00, with Take all, Log some and Skip all.">
+        </figure>
       </div>
-      <p><a href="/pricing/">See what Plus adds</a></p>
+    </section>
+
+    <section id="stacks" class="band chapter chapter--flip" aria-labelledby="stacks-title">
+      <div class="wrap chapter-grid split">
+        <div class="text">
+          <p class="eyebrow">Stacks and Take all</p>
+          <h2 id="stacks-title">One tap for the whole stack</h2>
+          <p>Group the things you take at the same time into stacks, such as Morning or With dinner. When you've taken the lot, one tap on Take all logs the whole stack.</p>
+          <p>If you only took some, Log some lets you choose which. Tapped by mistake? Undo puts it back.</p>
+        </div>
+        <figure class="shot">
+          <img class="screen crop crop-stack" src="/assets/screens/stack-take-all-light.webp" width="750" height="1629" loading="lazy" alt="Today after one tap on Take all: the Morning stack ticked at 08:15, with a line to undo Take all for Vitamin D3, Calcium and Creatine, and the Day Arc at 3 of 7.">
+        </figure>
+      </div>
+    </section>
+
+    <section id="reminders" class="band chapter" aria-labelledby="reminders-title">
+      <div class="wrap chapter-grid split">
+        <div class="text">
+          <p class="eyebrow">Reminders</p>
+          <h2 id="reminders-title">Reminders as firm as you need</h2>
+          <p>Each item has its own reminder strength: Gentle for supplements, Firm for prescriptions and injections. For those two only, Persistent keeps its follow-up when your phone's reminder limit gets tight. On iPhone, turn on Time Sensitive and reminders can come through a Focus.</p>
+          <p>Item names stay off your lock screen by default. Notifications show the stack name, like "Morning", and you can hide those too.</p>
+          <p class="more-link"><a href="/medication-reminders/">How reminders keep names private</a></p>
+        </div>
+        <figure class="shot shot-zoom">
+          <img class="screen crop crop-reminders zoomed" src="/assets/screens/reminders-light.webp" width="750" height="1629" loading="lazy" alt="An item's Reminders sheet: How firmly set to Firm, a note that medicine names never show on your lock screen, widgets, Watch or Siri, the Remind me to reorder switch, and Reminder health.">
+        </figure>
+      </div>
+    </section>
+
+    <section id="stock" class="band chapter" aria-labelledby="stock-title">
+      <div class="wrap chapter-grid">
+        <div class="text wide">
+          <p class="eyebrow">Stock, schedules and injection sites</p>
+          <h2 id="stock-title">Know when to reorder, whatever the schedule</h2>
+          <div class="trio">
+            <div>
+              <h3>Stock and reorder</h3>
+              <p>Tell Vitsy how much you have and it works out the days left and the date to order by. Turn on Remind me to reorder and you get a reminder on that date.</p>
+            </div>
+            <div>
+              <h3>Schedules</h3>
+              <p>Choose every day or several times a day, certain weekdays, one day a week, every few days, days on and days off such as 5 days on and 2 off, training days, or only when needed.</p>
+            </div>
+            <div>
+              <h3>Injection sites</h3>
+              <p>For injections, log the site on a body map that shows when you last used each one.</p>
+            </div>
+          </div>
+          <p>All of this is free.</p>
+          <p class="more-link"><a href="/injection-site-tracker/">How injection sites work</a> &middot; <a href="/supplement-tracker/">Supplement stacks, cycles and stock</a></p>
+        </div>
+      </div>
+    </section>
+
+    <section id="history" class="band chapter" aria-labelledby="history-title">
+      <div class="wrap chapter-grid split">
+        <div class="text">
+          <p class="eyebrow">History, streaks and milestones</p>
+          <h2 id="history-title">See how it's going</h2>
+          <p>History shows the last 12 weeks as a heat map, one square for each day, shaded by how much of that day you logged. A day with nothing logged just says Not logged.</p>
+          <p>Your streak counts the days you stayed on plan. Reach a milestone, such as 30 days on plan, and you earn a badge to keep: there are 71 badges (52 free, 19 with Plus). If streaks aren't for you, turn them off.</p>
+        </div>
+        <figure class="shot">
+          <img class="screen crop crop-history" src="/assets/screens/history-heatmap-light.webp" width="750" height="1629" loading="lazy" alt="History: 18 days on plan, a best of 18 days, 96% over the last 30 days, 2 of 2 safety nets in reserve and the next milestone at 30 days, then a 12-week heat map with runs on plan outlined.">
+        </figure>
+      </div>
+    </section>
+
+    <section id="more" class="band chapter" aria-labelledby="more-title">
+      <div class="wrap">
+        <h2 id="more-title">Also in Vitsy</h2>
+        <ul class="more-grid">
+          <li id="watch" class="more-item">
+            <h3>Apple Watch</h3>
+            <p>The Apple Watch app (watchOS 10 or later) shows your next stack with Taken and Skip, and your days on plan. Add a complication, such as the Day Arc, to your watch face.</p>
+          </li>
+          <li class="more-item">
+            <h3>Home Screen widgets</h3>
+            <p>The "Next stack" widget shows what's due next, with a Log button for the whole stack. The "History" widget shows your last 12 weeks.</p>
+          </li>
+          <li class="more-item">
+            <h3>Siri and Shortcuts</h3>
+            <p>Log a stack, ask what's next, check whether you've taken everything today, or ask how much of something is left. Say "Vitsy" in the phrase, as in "What's next in Vitsy".</p>
+          </li>
+          <li id="sleep" class="more-item">
+            <h3>Sleep, from Apple Health</h3>
+            <p>On iPhone, the Diary can show your sleep beside each day. Vitsy only reads it, with your permission, and never writes anything to Health. It doesn't store, export or back up your sleep.</p>
+          </li>
+          <li class="more-item">
+            <h3>Always free</h3>
+            <p>Wellbeing support in the Diary, reading your past check-ins and sessions, and workouts from Apple Health never need Plus.</p>
+          </li>
+        </ul>
+        <p>Widgets and the Watch follow your Names outside the app setting, so item names stay hidden by default.</p>
+      </div>
+    </section>
+  </div>
+
+  <section id="privacy" class="band band-teal chapter" aria-labelledby="privacy-title">
+    <div class="wrap chapter-grid split">
+      <div class="text">
+        <p class="eyebrow">Privacy</p>
+        <h2 id="privacy-title">Private by default</h2>
+        <p>There's no account to make and nothing to sign up for.</p>
+        <ul class="facts">
+          <li>What you enter is kept on your phone, in an encrypted database.</li>
+          <li>We never receive your records.</li>
+          <li>No ads in the app.</li>
+          <li>You choose what shows outside the app, and you can export or delete everything from Settings whenever you like.</li>
+        </ul>
+        <p><a href="/privacy/">Read the privacy policy</a></p>
+      </div>
+      <figure class="shot">
+        <img class="screen crop crop-privacy" src="/assets/screens/privacy-light.webp" width="750" height="1630" loading="lazy" alt="Settings, Names outside the app: Show names, Stack names only or Hide all names, for the lock screen and notifications.">
+      </figure>
     </div>
   </section>
 
-  <section id="maker" class="feature" aria-labelledby="maker-title">
-    <div class="text">
-      <h2 id="maker-title">Who makes Vitsy</h2>
-      <p>Vitsy is made by the Neutrade team at Neutrade Ltd, a small UK company. If you have a question or an idea, email us at <a href="mailto:support@neutrade.co.uk">support@neutrade.co.uk</a>.</p>
+  <section id="plus" class="band" aria-labelledby="plus-summary-title">
+    <div class="wrap">
+      <h2 id="plus-summary-title">Free to start, Plus when you take more</h2>
+      <p>Your first 3 items are free, with no time limit, and everything above comes with them.</p>
+      <p>Plus removes the limit and adds <span id="training">Training</span>, <span id="diary">Diary check-ins</span>, Patterns and the check-in reminder: 14 days free, then &pound;29.99 a year, or &pound;4.99 a month with no free days.</p>
+      <p class="small muted">Patterns looks for links between your check-ins and the rest of your day, such as sleep and training. A pattern isn't proof that one thing causes the other.</p>
+      <p><a href="/pricing/">Compare Free and Plus</a></p>
     </div>
   </section>
+
+  <section id="questions" class="band" aria-labelledby="questions-title">
+    <div class="wrap-narrow">
+      <h2 id="questions-title">Questions</h2>
+      <dl class="faq">
+        <dt>Does Vitsy tell me what to take?</dt>
+        <dd>No. Vitsy records what you take and reminds you when it's due. It doesn't suggest doses or check how things mix. For that, ask your pharmacist or GP. Vitsy isn't connected to the NHS.</dd>
+        <dt>What if I stop paying for Plus?</dt>
+        <dd>Nothing you've entered is deleted. Your first 3 items stay free, and what you logged stays readable. Training, new check-ins and Patterns lock until you take Plus again.</dd>
+      </dl>
+      <p><a href="/support/">More answers on the support page</a></p>
+    </div>
+  </section>
+
+  <div id="get" class="band band-night">
+    <svg class="night-stars" aria-hidden="true" focusable="false" fill="currentColor"><svg x="78.83%" y="28.29%" overflow="visible"><path d="M2.88 0L0.45 0.45L0 2.88L-0.45 0.45L-2.88 0L-0.45 -0.45L0 -2.88L0.45 -0.45Z" fill-opacity="0.37"/></svg><svg x="21.19%" y="86.82%" overflow="visible"><path d="M4.43 0L0.69 0.69L0 4.43L-0.69 0.69L-4.43 0L-0.69 -0.69L0 -4.43L0.69 -0.69Z" fill-opacity="0.48"/></svg><svg x="33.97%" y="52.23%" overflow="visible"><path d="M3.05 0L0.47 0.47L0 3.05L-0.47 0.47L-3.05 0L-0.47 -0.47L0 -3.05L0.47 -0.47Z" fill-opacity="0.6"/></svg><circle cx="26.61%" cy="57.85%" r="0.81" fill-opacity="0.61"/><circle cx="73.33%" cy="15.96%" r="1.16" fill-opacity="0.35"/><circle cx="37.82%" cy="54.3%" r="0.79" fill-opacity="0.77"/><circle cx="66.01%" cy="55.42%" r="0.73" fill-opacity="0.37"/><circle cx="6%" cy="28.67%" r="1.24" fill-opacity="0.61"/><circle cx="87.23%" cy="86.13%" r="1" fill-opacity="0.35"/><circle cx="12.77%" cy="86.42%" r="1.24" fill-opacity="0.44"/><circle cx="61.47%" cy="84.26%" r="0.8" fill-opacity="0.53"/><circle cx="54.43%" cy="65.28%" r="1.11" fill-opacity="0.73"/><circle cx="94%" cy="42.58%" r="0.82" fill-opacity="0.97"/><circle cx="45.27%" cy="57.97%" r="0.77" fill-opacity="0.36"/></svg>
+    <div class="wrap closing-grid">
+      <section id="register" aria-labelledby="get-title">
+        <h2 id="get-title">Hear when Vitsy launches</h2>
+        <p>Vitsy is coming soon for iPhone and Android. Send us a short email and we'll tell you when it's out.</p>
+        <div class="actions">
+          <a class="button secondary" href="mailto:support@neutrade.co.uk?subject=Vitsy%3A%20let%20me%20know%20when%20it%20launches&amp;body=Please%20email%20me%20when%20Vitsy%20is%20available.%20I%20use%3A%20iPhone%20%2F%20Android%20(delete%20as%20needed).">Email me when it's out</a>
+          <p class="or-email">or email <a href="mailto:support@neutrade.co.uk">support@neutrade.co.uk</a></p>
+        </div>
+        <p class="small">This opens a short email to us in your mail app. We use your address only to tell you when Vitsy launches.</p>
+      </section>
+      <section id="maker" aria-labelledby="maker-title">
+        <h2 id="maker-title">Who makes Vitsy</h2>
+        <p>Vitsy is made by the Neutrade team at Neutrade Ltd, a small UK company. If you have a question or an idea, email us at <a href="mailto:support@neutrade.co.uk">support@neutrade.co.uk</a>.</p>
+      </section>
+    </div>
+  </div>
 </main>
 
 <footer class="site-footer">
-  <div class="wrap">
-    <ul>
-      <li><a href="/privacy/">Privacy</a></li>
-      <li><a href="/terms/">Terms</a></li>
-      <li><a href="/support/">Support</a></li>
-      <li><a href="mailto:support@neutrade.co.uk">support@neutrade.co.uk</a></li>
-    </ul>
-    <p>&copy; 2026 Neutrade Ltd. Vitsy is made by Neutrade Ltd.</p>
+  <div class="wrap footer-grid">
+    <div class="footer-about">
+      <p class="footer-brand"><img src="/assets/icon-128.png" width="28" height="28" alt="">Vitsy</p>
+      <p>A supplement and medicine tracker for iPhone and Android, coming soon.</p>
+      <p class="footer-mail"><a href="mailto:support@neutrade.co.uk">support@neutrade.co.uk</a></p>
+    </div>
+    <nav class="footer-nav" aria-label="Footer">
+      <div>
+        <p class="footer-title" id="footer-features">Features</p>
+        <ul id="footer-features-list" aria-labelledby="footer-features">
+          <li><a href="/injection-site-tracker/">Injection site tracker</a></li>
+          <li><a href="/medication-reminders/">Medication reminders</a></li>
+          <li><a href="/supplement-tracker/">Supplement stacks and cycles</a></li>
+          <li><a href="/#features">All features</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer-title" id="footer-help">Help</p>
+        <ul aria-labelledby="footer-help">
+          <li><a href="/pricing/">Plus</a></li>
+          <li><a href="/support/">Support</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer-title" id="footer-legal">Legal</p>
+        <ul aria-labelledby="footer-legal">
+          <li><a href="/privacy/">Privacy</a></li>
+          <li><a href="/terms/">Terms</a></li>
+        </ul>
+      </div>
+    </nav>
+    <p class="footer-legal">&copy; 2026 Neutrade Ltd</p>
   </div>
 </footer>
 </body>

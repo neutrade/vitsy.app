@@ -2,13 +2,16 @@
 <html lang="en-GB" data-theme="light">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Page not found: Vitsy</title>
 <meta name="description" content="This page could not be found on the Vitsy website.">
 <meta name="robots" content="noindex">
 <meta name="referrer" content="no-referrer">
 <meta name="color-scheme" content="light">
-<link rel="icon" href="/favicon.png" type="image/png">
+<link rel="preload" href="/assets/fonts/fraunces-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" href="/assets/icon-192.png" type="image/png" sizes="192x192">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/assets/tokens.css">
 <link rel="stylesheet" href="/assets/site.css">
@@ -18,10 +21,10 @@
 <a class="skip" href="#main">Skip to content</a>
 <header class="site-header">
   <div class="wrap">
-    <a class="brand" href="/"><img src="/assets/icon-128.png" width="36" height="36" alt="">Vitsy</a>
+    <a class="brand" href="/" aria-label="Vitsy home"><img src="/assets/icon-128.png" width="36" height="36" alt=""><span class="brand-name">Vitsy</span></a>
     <nav class="site-nav" aria-label="Main">
       <ul>
-        <li><a href="/">Home</a></li>
+        <li><a href="/#features">Features</a></li>
         <li><a href="/pricing/">Plus</a></li>
         <li><a href="/support/">Support</a></li>
       </ul>
@@ -33,7 +36,7 @@
   <h1 id="page-title">Page not found</h1>
   <div id="page-default">
     <p class="lead">There's nothing at this address. It may have moved.</p>
-    <p><a href="/">Go to the Vitsy home page</a> or <a href="/support/">get help</a>.</p>
+    <div class="actions"><a class="button" href="/">Go to the Vitsy home page</a><a class="button outline" href="/support/">Get help</a></div>
     <noscript>
       <p>To open a Vitsy invite, open this link on your phone with Vitsy installed. Without JavaScript, this page can only say that much.</p>
     </noscript>
@@ -54,14 +57,38 @@
 </main>
 
 <footer class="site-footer">
-  <div class="wrap">
-    <ul>
-      <li><a href="/privacy/">Privacy</a></li>
-      <li><a href="/terms/">Terms</a></li>
-      <li><a href="/support/">Support</a></li>
-      <li><a href="mailto:support@neutrade.co.uk">support@neutrade.co.uk</a></li>
-    </ul>
-    <p>&copy; 2026 Neutrade Ltd. Vitsy is made by Neutrade Ltd.</p>
+  <div class="wrap footer-grid">
+    <div class="footer-about">
+      <p class="footer-brand"><img src="/assets/icon-128.png" width="28" height="28" alt="">Vitsy</p>
+      <p>A supplement and medicine tracker for iPhone and Android, coming soon.</p>
+      <p class="footer-mail"><a href="mailto:support@neutrade.co.uk">support@neutrade.co.uk</a></p>
+    </div>
+    <nav class="footer-nav" aria-label="Footer">
+      <div>
+        <p class="footer-title" id="footer-features">Features</p>
+        <ul id="footer-features-list" aria-labelledby="footer-features">
+          <li><a href="/injection-site-tracker/">Injection site tracker</a></li>
+          <li><a href="/medication-reminders/">Medication reminders</a></li>
+          <li><a href="/supplement-tracker/">Supplement stacks and cycles</a></li>
+          <li><a href="/#features">All features</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer-title" id="footer-help">Help</p>
+        <ul aria-labelledby="footer-help">
+          <li><a href="/pricing/">Plus</a></li>
+          <li><a href="/support/">Support</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer-title" id="footer-legal">Legal</p>
+        <ul aria-labelledby="footer-legal">
+          <li><a href="/privacy/">Privacy</a></li>
+          <li><a href="/terms/">Terms</a></li>
+        </ul>
+      </div>
+    </nav>
+    <p class="footer-legal">&copy; 2026 Neutrade Ltd</p>
   </div>
 </footer>
 </body>

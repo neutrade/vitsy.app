@@ -77,3 +77,13 @@
   --dl-friend-mark-high: #121413;
   --dl-scrim: rgba(0,0,0,0.6);
 }
+:root {
+  --dl-sky-night: #101A33;
+  --dl-plate: #063834;
+  --dl-sky-day-0: #FFFFFF;
+  --dl-sky-day-1: #FFFFFF;
+  --dl-sky-day-2: #F2C96A;
+  --dl-sky-glint: #FFFFFF;
+  --dl-sky-glint-core: #FFFFFF;
+  --dl-sky-star: #EAF0FF;
+}

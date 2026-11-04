@@ -3,29 +3,114 @@
  * scripts/tokens-css.ts generates from src/theme/tokens.ts: no colour literals here. The site is always light
  * (job 20261021-website-light, D1956): every page has <html data-theme="light">, so the generated dark rules never
  * apply, whatever the reader's setting.
+ *
+ * Layout (job 20261104-site-overhaul, plan A, D-A1 to D-A6): Home, Plus and the feature pages are a full-width
+ * <main class="bands"> of bands, each with its own .wrap; the other pages keep one centred column. DOM order is
+ * reading order: nothing here moves content around.
  */
 
-/* Fonts: copied from the app's @expo-google-fonts packages (SIL Open Font License, see fonts/OFL-*.txt). */
+/*
+ * Fonts: the app's Fraunces 600 and Inter 400 and 600 (SIL Open Font License, see fonts/OFL-*.txt), as WOFF2 subsets
+ * made by site/make-fonts.sh (job 20261104-site-overhaul, plan C). The TTFs stay on disk as the subset source.
+ */
 @font-face {
   font-family: 'Fraunces';
   font-style: normal;
   font-weight: 600;
   font-display: swap;
-  src: url(/assets/fonts/Fraunces_600SemiBold.ttf) format('truetype');
+  src: url(/assets/fonts/fraunces-600.woff2) format('woff2');
 }
 @font-face {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url(/assets/fonts/Inter_400Regular.ttf) format('truetype');
+  src: url(/assets/fonts/inter-400.woff2) format('woff2');
 }
 @font-face {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 600;
   font-display: swap;
-  src: url(/assets/fonts/Inter_600SemiBold.ttf) format('truetype');
+  src: url(/assets/fonts/inter-600.woff2) format('woff2');
+}
+/*
+ * Metric-matched fallbacks, so the swap to the web fonts moves nothing: size-adjust is the web font's average advance
+ * over the fallback's on the Home lead, and the overrides are the web font's hhea ascent and descent over that
+ * (measured against Georgia Bold and Arial / Arial Bold on macOS, 4 Nov 2026; the job's tools/font-metrics.py).
+ */
+@font-face {
+  font-family: 'Fraunces fallback';
+  font-weight: 600;
+  src: local('Georgia Bold'), local('Georgia-Bold'), local('Georgia');
+  size-adjust: 93.18%;
+  ascent-override: 104.96%;
+  descent-override: 27.37%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Inter fallback';
+  font-weight: 400;
+  src: local('Arial'), local('ArialMT');
+  size-adjust: 107.1%;
+  ascent-override: 90.45%;
+  descent-override: 22.52%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Inter fallback';
+  font-weight: 600;
+  src: local('Arial Bold'), local('Arial-BoldMT');
+  size-adjust: 101.19%;
+  ascent-override: 95.74%;
+  descent-override: 23.84%;
+  line-gap-override: 0%;
+}
+
+:root {
+  /* Fonts */
+  --font-display: 'Fraunces', 'Fraunces fallback', Georgia, serif;
+  --font-body: 'Inter', 'Inter fallback', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Type, fluid between 320 and 1280 px (largest max/min 1.65, so 200% zoom still grows the text) */
+  --fs-caption: 0.875rem;
+  --fs-small: 0.9375rem;
+  --fs-body: 1.0625rem;
+  --fs-lead: clamp(1.1875rem, 1.167rem + 0.104vw, 1.25rem);
+  --fs-h3: 1.25rem;
+  --fs-h2: clamp(1.625rem, 1.417rem + 1.042vw, 2.25rem);
+  --fs-h1: clamp(2.125rem, 1.667rem + 2.292vw, 3.5rem);
+  --fs-eyebrow: clamp(0.875rem, 0.854rem + 0.104vw, 0.9375rem);
+
+  /* Measure: chapter text at most about 73 characters a line in Inter 17 px, prose about 76, leads about 50 */
+  --measure: 34rem;
+  --measure-prose: 40rem;
+  --measure-lead: 30rem;
+
+  /* Spacing (the app's spacing tokens, plus two site steps) */
+  --sp-2xs: 2px;
+  --sp-xs: 4px;
+  --sp-sm: 8px;
+  --sp-md: 12px;
+  --sp-lg: 16px;
+  --sp-xl: 24px;
+  --sp-2xl: 32px;
+  --sp-3xl: 48px;
+  --sp-4xl: 64px;
+  --sp-5xl: 96px;
+  --section-y: clamp(2.5rem, 1.5rem + 5vw, 6rem);
+  --gutter: 1rem;
+
+  /* Radius (the app's) */
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-pill: 999px;
+}
+@media (min-width: 600px) {
+  :root {
+    --gutter: 1.5rem;
+  }
 }
 
 *,
@@ -44,40 +129,53 @@ html {
   text-size-adjust: 100%;
 }
 
+/* The footer sits at the bottom of short pages (404, invite). */
 body {
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100svh;
   background: var(--dl-bg);
   color: var(--dl-text);
-  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  font-size: 1.0625rem;
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
   line-height: 1.6;
   overflow-wrap: break-word;
+}
+main {
+  flex: 1 0 auto;
 }
 
 h1,
 h2,
 h3 {
-  font-family: 'Fraunces', Georgia, serif;
+  font-family: var(--font-display);
   font-weight: 600;
-  line-height: 1.2;
-  margin: 0 0 0.5em;
+  margin: 0;
 }
 h1 {
-  font-size: clamp(2rem, 6vw, 3.25rem);
+  font-size: var(--fs-h1);
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  margin-bottom: var(--sp-md);
 }
 h2 {
-  font-size: clamp(1.5rem, 4vw, 2.125rem);
+  font-size: var(--fs-h2);
+  line-height: 1.15;
+  margin-bottom: var(--sp-md);
 }
 h3 {
-  font-size: 1.25rem;
-  margin-top: 1.5em;
+  font-size: var(--fs-h3);
+  line-height: 1.3;
+  margin-bottom: var(--sp-sm);
 }
 
 p,
 ul,
 ol,
 dl {
-  margin: 0 0 1em;
+  margin: 0 0 var(--sp-lg);
 }
 
 a {
@@ -112,33 +210,45 @@ a:hover {
 
 .wrap {
   width: 100%;
-  max-width: 68rem;
-  margin: 0 auto;
-  padding: 0 1.25rem;
+  max-width: 70rem;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+/* A narrow column that keeps the page's left edge (it lines up with every other band's .wrap). */
+.wrap-narrow {
+  width: 100%;
+  max-width: 70rem;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+.wrap-narrow > * {
+  max-width: var(--measure-prose);
 }
 
-/* Header and footer */
+/* Header: one row at every width; below 360 px the logo stands alone (D-A5) */
 .site-header {
+  background: var(--dl-bg);
   border-bottom: 1px solid var(--dl-border);
 }
 .site-header .wrap {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   justify-content: space-between;
-  gap: 0.5rem 1.5rem;
-  padding-top: 0.875rem;
-  padding-bottom: 0.875rem;
+  gap: var(--sp-lg);
+  padding-block: var(--sp-md);
 }
 .brand {
   display: inline-flex;
+  flex-shrink: 0;
   align-items: center;
   gap: 0.625rem;
   color: var(--dl-text);
   text-decoration: none;
-  font-family: 'Fraunces', Georgia, serif;
+  font-family: var(--font-display);
   font-weight: 600;
   font-size: 1.375rem;
+  line-height: 1.2;
 }
 .brand img {
   width: 36px;
@@ -147,96 +257,176 @@ a:hover {
 }
 .site-nav ul {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem 1.25rem;
+  flex-wrap: nowrap;
+  gap: var(--sp-lg);
   list-style: none;
   margin: 0;
   padding: 0;
 }
 .site-nav a {
   display: inline-block;
-  padding: 0.5rem 0;
+  padding: 0.625rem 0;
   color: var(--dl-text);
   font-weight: 600;
+  line-height: 1.4;
   text-decoration: none;
+  white-space: nowrap;
 }
 .site-nav a:hover,
 .site-nav a[aria-current='page'] {
   color: var(--dl-primary);
   text-decoration: underline;
 }
+@media (min-width: 600px) {
+  .site-nav ul {
+    gap: var(--sp-xl);
+  }
+}
+@media (max-width: 359.98px) {
+  .brand-name {
+    display: none;
+  }
+}
 
+/* Footer: a line about Vitsy, then the Features, Help and Legal groups (D-A5) */
 .site-footer {
-  margin-top: 4rem;
+  margin-top: var(--sp-4xl);
   border-top: 1px solid var(--dl-border);
   color: var(--dl-text-muted);
-  font-size: 0.9375rem;
+  font-size: var(--fs-small);
+  line-height: 1.45;
 }
-.site-footer .wrap {
-  padding-top: 1.5rem;
-  padding-bottom: 2.5rem;
+/* A page that ends in a band sits flush on the footer (D-A4). */
+main.bands + .site-footer {
+  margin-top: 0;
+  border-top: 0;
 }
-.site-footer ul {
+.footer-grid {
+  display: grid;
+  gap: var(--sp-xl);
+  padding-block: var(--sp-2xl) var(--sp-3xl);
+}
+.footer-about p {
+  margin: 0;
+  max-width: 22rem;
+}
+.footer-about .footer-brand {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem 1.5rem;
-  list-style: none;
-  padding: 0;
-  margin: 0 0 0.75rem;
+  align-items: center;
+  gap: var(--sp-sm);
+  margin: 0 0 var(--sp-sm);
+  color: var(--dl-text);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.125rem;
 }
-.site-footer a {
+.footer-brand img {
+  border-radius: 22%;
+}
+.footer-nav {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, auto));
+  justify-content: start;
+  gap: var(--sp-xl) var(--sp-2xl);
+}
+.footer-about .footer-mail {
+  margin-top: var(--sp-sm);
+}
+.footer-title {
+  margin: 0 0 var(--sp-xs);
+  color: var(--dl-text);
+  font-weight: 600;
+}
+.footer-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.footer-nav a {
   display: inline-block;
-  padding: 0.25rem 0;
+  padding: 0.3125rem 0;
+}
+.footer-legal {
+  margin: 0;
+}
+@media (min-width: 600px) {
+  .footer-nav {
+    column-gap: var(--sp-4xl);
+  }
+}
+@media (min-width: 1024px) {
+  .footer-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 3fr);
+    column-gap: var(--sp-3xl);
+  }
+  .footer-legal {
+    grid-column: 1 / -1;
+  }
 }
 
 /* Text helpers */
 .eyebrow {
-  margin: 0 0 0.5rem;
-  color: var(--dl-primary);
+  margin: 0 0 var(--sp-sm);
+  color: var(--dl-text-muted);
+  font-size: var(--fs-eyebrow);
   font-weight: 600;
+  line-height: 1.3;
   letter-spacing: 0.02em;
 }
+/* Rework 1: no orphaned last words in headlines and leads where the browser can avoid them. */
+h1,
+h2,
+.lead,
+.proof {
+  text-wrap: pretty;
+}
 .lead {
-  font-size: 1.1875rem;
+  font-size: var(--fs-lead);
+  line-height: 1.5;
   color: var(--dl-text-muted);
-  max-width: 34rem;
+  max-width: var(--measure-lead);
+}
+.text {
+  max-width: var(--measure);
 }
 .muted {
   color: var(--dl-text-muted);
 }
 .small {
-  font-size: 0.9375rem;
+  font-size: var(--fs-small);
+  line-height: 1.45;
 }
-.prose {
-  max-width: 42rem;
+/* Support, privacy and terms share the page's left edge with every other page (rework 1); the text keeps its measure. */
+.prose > * {
+  max-width: var(--measure-prose);
+}
+.prose .card :where(p, ul, ol, dl) {
+  max-width: none;
 }
 .prose h2 {
   font-size: 1.5rem;
   margin-top: 2em;
 }
-
-.badge {
-  display: inline-block;
-  vertical-align: middle;
-  margin-left: 0.5rem;
-  padding: 0.125rem 0.625rem;
-  border-radius: 999px;
-  background: var(--dl-primary);
-  color: var(--dl-on-primary);
-  font-family: 'Inter', system-ui, sans-serif;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
+.prose h3 {
+  margin-top: var(--sp-xl);
+}
+/* Every paragraph and list in a band or card keeps a readable measure (no specificity, so .lead keeps its own). */
+:where(.band, .card) :where(p, ul, ol, dl) {
+  max-width: var(--measure);
 }
 
 /* Buttons and links styled as buttons */
 .button {
-  display: inline-block;
-  padding: 0.75rem 1.375rem;
-  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0.6875rem 1.375rem;
+  border-radius: var(--radius-pill);
   background: var(--dl-primary);
   color: var(--dl-on-primary);
   font-weight: 600;
+  line-height: 1.2;
   text-decoration: none;
   border: 2px solid var(--dl-primary);
 }
@@ -255,17 +445,24 @@ a:hover {
 .actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
-  margin: 1.5rem 0;
+  align-items: center;
+  gap: var(--sp-md);
+  margin: var(--sp-xl) 0 var(--sp-lg);
+}
+/* "or email ..." with a mailto button, for people without a mail app */
+.or-email {
+  margin: 0;
+  font-size: var(--fs-small);
+  overflow-wrap: anywhere;
 }
 
 /* Cards */
 .card {
   background: var(--dl-surface);
   border: 1px solid var(--dl-border);
-  border-radius: 16px;
-  padding: 1.25rem 1.375rem;
-  margin: 0 0 1rem;
+  border-radius: var(--radius-lg);
+  padding: var(--sp-xl);
+  margin: 0 0 var(--sp-lg);
 }
 .card > :first-child {
   margin-top: 0;
@@ -273,145 +470,401 @@ a:hover {
 .card > :last-child {
   margin-bottom: 0;
 }
-
-/*
- * Hero (job 20261102-site-features, from the marketing review): a full-width flat teal band, as the store
- * screenshots will be, with white type and one amber word. The band reaches the window's edges with a spread
- * shadow clipped to the hero's own height, so nothing is wider than the page and it never scrolls sideways.
- * On a phone the real Today capture sits straight under the headline, cropped to the Day Arc, so it shows above the
- * fold; from 720 px it sits beside the text, uncropped.
- */
-.hero {
-  display: grid;
-  grid-template-areas: 'head' 'shots' 'body';
-  gap: 1.5rem;
-  align-items: center;
-  padding: 2rem 0 2.5rem;
-  background: var(--dl-primary);
-  color: var(--dl-on-primary);
-  box-shadow: 0 0 0 100vmax var(--dl-primary);
-  clip-path: inset(0 -100vmax);
-}
-.hero-head {
-  grid-area: head;
-}
-.hero .shots {
-  grid-area: shots;
-}
-.hero-body {
-  grid-area: body;
-}
-.hero h1 {
-  margin-bottom: 0;
-}
-.hero .highlight {
-  color: var(--dl-accent);
-}
-.hero .eyebrow,
-.hero .lead,
-.hero a {
-  color: var(--dl-on-primary);
-}
-.hero .button.secondary {
-  color: var(--dl-on-secondary);
-}
-.hero :focus-visible {
-  outline-color: var(--dl-accent);
-}
-.hero .lead {
-  margin-top: 0;
-}
-.hero .actions {
-  margin: 1.25rem 0 0.75rem;
-}
-.availability {
-  margin: 0 0 0.25rem;
-  font-size: 0.9375rem;
-  font-weight: 600;
-}
-.register-line {
-  margin: 0;
-  font-size: 0.9375rem;
-  overflow-wrap: anywhere;
+@media (max-width: 479.98px) {
+  .card {
+    padding: calc(var(--sp-lg) + var(--sp-xs));
+  }
 }
 
 /*
- * Screenshots: the raw simulator capture, tight to the screen. The display's rounded corners are drawn here
- * (iPhone 18 Pro: about 13.7% of the width by 6.3% of the height). No padding, background, shadow or frame:
- * only a hairline so a light screen still reads against the light page.
+ * Screenshots: the raw simulator capture. The display's rounded corners are drawn here (iPhone 18 Pro: about 13.7%
+ * of the width by 6.3% of the height). No padding, background, shadow or frame: only a hairline so a light screen
+ * still reads against the light page.
  */
 .screen {
   display: block;
   width: 100%;
-  max-width: 300px;
   height: auto;
   aspect-ratio: 1206 / 2622;
   border-radius: 13.7% / 6.3%;
   border: 1px solid var(--dl-border);
 }
-.shots {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1.25rem;
+/*
+ * Crops (D-A2): CSS only, over the full capture, so the file keeps the device shape. For a crop from t to b of the
+ * capture's height H (750 px wide): --crop-ratio is 750 / ((b - t) x H) and --crop-y is t / (1 - (b - t)).
+ */
+.crop {
+  max-width: none;
+  width: 100%;
+  aspect-ratio: var(--crop-ratio);
+  object-fit: cover;
+  object-position: 50% var(--crop-y);
+  border-radius: var(--radius-lg);
+}
+.crop-hero,
+.crop-arc {
+  --crop-ratio: 750 / 521;
+  --crop-y: 10.29%;
+}
+.crop-stack {
+  --crop-ratio: 750 / 505;
+  --crop-y: 57.97%;
+}
+.crop-reminders {
+  --crop-ratio: 750 / 443;
+  --crop-y: 44.78%;
+}
+.crop-history {
+  --crop-ratio: 750 / 639;
+  --crop-y: 80.25%;
+}
+.crop-privacy {
+  --crop-ratio: 750 / 505;
+  --crop-y: 25.07%;
+}
+.crop-training {
+  --crop-ratio: 750 / 373;
+  --crop-y: 41.25%;
+}
+.crop-patterns {
+  --crop-ratio: 750 / 502;
+  --crop-y: 28.32%;
+}
+.crop-milestone {
+  --crop-ratio: 750 / 571;
+  --crop-y: 61.54%;
+}
+/* The feature pages' captures (job 20261104-site-overhaul, plan C), each on its own page only. */
+.crop-sites {
+  --crop-ratio: 750 / 863;
+  --crop-y: 44.68%;
+}
+.crop-reminders-sheet {
+  --crop-ratio: 750 / 878;
+  --crop-y: 70.72%;
+}
+.crop-item {
+  --crop-ratio: 750 / 700;
+  --crop-y: 21.05%;
+}
+/* Home's chapter links to the feature pages. */
+.more-link {
+  font-weight: 600;
+}
+@media (min-width: 720px) {
+  .crop-hero {
+    --crop-ratio: 750 / 753;
+    --crop-y: 13.02%;
+  }
+}
+/*
+ * Rework 1: a capture whose sheet sits on a dimmed backdrop is zoomed slightly inside its rounded figure, so the grey
+ * bars either side of the sheet don't show. The crop formulas still apply to the zoomed image.
+ */
+.shot-zoom {
+  border: 1px solid var(--dl-border);
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+}
+.shot-zoom .zoomed {
+  --zoom: 1.06;
+  width: calc(100% * var(--zoom));
+  margin-inline: calc((1 - var(--zoom)) * 50%);
+  border: 0;
+  border-radius: 0;
+}
+/* A figure is never wider than the capture at 2x, so it never upscales on a retina screen. */
+.shot,
+.hero-shot {
   margin: 0;
+  width: min(100%, 23.4375rem);
+  justify-self: center;
 }
-.shots picture {
-  flex: 1 1 200px;
-  max-width: 280px;
-  min-width: 0;
+
+/* Bands (D-A4): full width, each with its own .wrap. The only coloured ones are teal (hero, privacy) and night. */
+main.bands {
+  width: 100%;
 }
-.shots .screen {
-  margin: 0 auto;
+.band {
+  padding-block: var(--section-y);
 }
-.hero .shots picture {
-  max-width: 300px;
+/* Two cream bands in a row share one gap rather than doubling it (also across a run of chapters). */
+.band:not(.band-teal, .band-night, .hero) + .band:not(.band-teal, .band-night),
+.band-intro + .chapters > .chapter:first-child,
+.chapters + .band:not(.band-teal, .band-night) {
+  padding-top: 0;
 }
-/* On the teal band the hairline would show as a light edge; it takes the band's colour there. */
-.hero .screen {
+.band-teal {
+  background: var(--dl-primary);
+  color: var(--dl-on-primary);
+}
+.band-night {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding-top: max(5rem, var(--section-y));
+  background: var(--dl-sky-night);
+  color: var(--dl-on-primary);
+}
+.band-night > .wrap,
+.band-night > .wrap-narrow {
+  position: relative;
+  z-index: 1;
+}
+.night-stars {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+.band-teal a:not(.button),
+.band-night a:not(.button),
+.band-teal .eyebrow,
+.band-night .eyebrow,
+.band-teal .lead,
+.band-night .lead,
+.band-teal .muted,
+.band-night .muted {
+  color: var(--dl-on-primary);
+}
+.band-teal .screen {
   border-color: var(--dl-primary);
 }
-@media (max-width: 719.98px) {
-  .hero .shots picture {
-    max-width: 340px;
+.band-teal :focus-visible,
+.band-night :focus-visible {
+  outline-color: var(--dl-accent);
+}
+
+/* Chapters: text, then the figure; side by side from 720 px (grid areas, so the reading order never changes) */
+.chapters > .chapter + .chapter {
+  padding-top: 0;
+}
+.chapter-grid {
+  display: grid;
+  gap: var(--sp-xl);
+}
+.chapter-grid > .text > :last-child {
+  margin-bottom: 0;
+}
+@media (min-width: 720px) {
+  .chapter-grid.split {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    grid-template-areas: 'text shot';
+    column-gap: var(--sp-3xl);
+    align-items: center;
   }
-  .hero .screen {
-    aspect-ratio: 1206 / 1150;
-    object-fit: cover;
-    object-position: top;
-    border-radius: 24px;
+  .chapter--flip .chapter-grid.split {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    grid-template-areas: 'shot text';
+  }
+  .chapter-grid.split > .text {
+    grid-area: text;
+  }
+  .chapter-grid.split > .shot {
+    grid-area: shot;
+  }
+}
+/* Three short blocks (Home #stock): one column, three from 1024 px when the chapter has no figure */
+.trio {
+  display: grid;
+  gap: var(--sp-lg);
+  margin: var(--sp-xl) 0;
+}
+.trio > div > :last-child {
+  margin-bottom: 0;
+}
+.text.wide {
+  max-width: none;
+}
+@media (min-width: 720px) {
+  .trio {
+    gap: var(--sp-xl);
+  }
+}
+@media (min-width: 1024px) {
+  .chapter-grid:not(.split) .trio {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+/* Also in Vitsy (Home #more) */
+.more-grid {
+  list-style: none;
+  padding: 0;
+  margin: var(--sp-xl) 0;
+  display: grid;
+  gap: var(--sp-lg) var(--sp-xl);
+}
+:where(.band) .more-grid {
+  max-width: none;
+}
+.more-item {
+  border-top: 2px solid var(--dl-primary);
+  padding-top: var(--sp-md);
+}
+.more-item p {
+  margin: 0;
+}
+@media (min-width: 560px) {
+  .more-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1024px) {
+  .more-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+/* The privacy band's facts, each with a small drawn ring (no glyph) */
+.facts {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: var(--sp-md);
+}
+.facts li {
+  position: relative;
+  padding-left: 1.75rem;
+}
+.facts li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.4em;
+  width: 0.875rem;
+  height: 0.875rem;
+  border: 2px solid var(--dl-accent);
+  border-radius: 50%;
+}
+@media (min-width: 560px) {
+  .facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--sp-xl);
+  }
+}
+/* The closing night band: register and who makes Vitsy, side by side from 720 px */
+.closing-grid {
+  display: grid;
+  gap: var(--sp-2xl);
+}
+.closing-grid > section > :last-child {
+  margin-bottom: 0;
+}
+@media (min-width: 720px) {
+  .closing-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: var(--sp-3xl);
   }
 }
 
-/* Feature sections */
-.feature {
+/*
+ * Hero (Home only): the flat teal band. DOM order is the phone order: eyebrow, headline, lead, button, "or email",
+ * the proof line, the controls slot, then the capture. The sky's layers sit under .hero-grid (plan B).
+ */
+.hero {
+  --ribbon-space: clamp(2rem, 1rem + 5vw, 7rem);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  overflow: clip;
+  background: var(--dl-primary);
+  color: var(--dl-on-primary);
+  padding-top: clamp(1rem, 0.2rem + 4vw, 4.5rem);
+  padding-bottom: calc(var(--section-y) + var(--ribbon-space));
+}
+.hero-grid {
+  position: relative;
+  z-index: 2;
   display: grid;
-  gap: 1.75rem;
-  align-items: center;
-  padding: 3rem 0;
-  border-top: 1px solid var(--dl-border);
+  gap: var(--sp-xl);
 }
-.feature .text {
-  max-width: 34rem;
+.hero-text > * {
+  margin: 0;
 }
-/* The last section sits on the footer's own top margin, with no extra padding below it. */
-.feature:last-child {
-  padding-bottom: 0;
+.hero-text > h1 {
+  margin-top: var(--sp-sm);
+}
+.hero-text > .lead {
+  margin-top: var(--sp-md);
+  color: var(--dl-on-primary);
+}
+.hero-text > .actions {
+  margin-top: var(--sp-xl);
+}
+.hero-text > .proof {
+  margin-top: var(--sp-md);
+}
+.hero-text > .hero-controls {
+  margin-top: var(--sp-sm);
+}
+.hero .eyebrow,
+.hero a:not(.button) {
+  color: var(--dl-on-primary);
+}
+.hero .highlight {
+  color: var(--dl-accent);
+}
+.hero .actions {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-sm);
+}
+/* Rework 2: availability on its own line, then the facts as a wrapping row with gaps (no dot can start or end a line). */
+.proof {
+  font-size: var(--fs-small);
+  line-height: 1.45;
+  max-width: var(--measure);
+}
+.proof > * {
+  margin: 0;
+}
+.proof .availability {
+  font-weight: 600;
+}
+.proof-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--sp-lg);
+  list-style: none;
+  padding: 0;
+}
+/* Holds the sky's Pause button (plan B), so the button appearing never moves the capture. */
+.hero-controls {
+  min-height: 44px;
+}
+.hero .screen {
+  border-color: var(--dl-primary);
+}
+.hero :focus-visible {
+  outline-color: var(--dl-accent);
+}
+@media (min-width: 720px) {
+  .hero-grid {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    column-gap: var(--sp-3xl);
+    align-items: center;
+  }
+  .hero-shot {
+    justify-self: end;
+  }
 }
 
 /* Pricing */
 .plans {
   display: grid;
-  gap: 1rem;
-  margin: 1.5rem 0;
+  gap: var(--sp-lg);
+  margin: var(--sp-xl) 0;
 }
-.plan h2 {
+.plan h2,
+.plan h3 {
   font-size: 1.5rem;
 }
 .plan .price {
-  font-family: 'Fraunces', Georgia, serif;
+  font-family: var(--font-display);
   font-size: 1.75rem;
   font-weight: 600;
+  line-height: 1.2;
   margin: 0 0 0.25rem;
 }
 /* Plus is the filled card (marketing review): the offer, "14 days free, then £29.99 a year", reads as the offer. */
@@ -434,96 +887,58 @@ a:hover {
 .plan.plus {
   align-self: start;
 }
+@media (min-width: 720px) {
+  .plans {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--sp-xl);
+  }
+}
 .ticks {
   padding-left: 1.25rem;
 }
 .ticks li {
   margin-bottom: 0.375rem;
 }
+@media (min-width: 480px) {
+  .ticks.cols {
+    columns: 2;
+    column-gap: var(--sp-2xl);
+    max-width: 48rem;
+  }
+  .ticks.cols li {
+    break-inside: avoid;
+  }
+}
 .promise {
   border-left: 4px solid var(--dl-secondary);
-  padding: 0.5rem 0 0.5rem 1rem;
-  margin: 1.5rem 0;
+  padding: var(--sp-sm) 0 var(--sp-sm) var(--sp-lg);
+  margin: var(--sp-xl) 0 0;
   font-size: 1.125rem;
+  max-width: var(--measure);
 }
-
-/*
- * Home's features overview (job 20261102-site-features): two groups of short tiles, the free ones first, then
- * "Plus adds" on a tinted panel. One column at 320 px, two from about 360 px, three on a wide window.
- */
-.overview {
-  padding: 3rem 0;
-}
-.overview .group {
-  margin: 1.5rem 0;
-}
-.overview .group h3 {
-  margin: 0 0 0.75rem;
-}
-.plus-group {
-  background: var(--dl-surface2);
-  border-radius: 16px;
-  padding: 1.25rem;
-}
-.tiles {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 9.5rem), 1fr));
-  gap: 0.75rem;
-}
-.tile {
-  background: var(--dl-surface);
-  border: 1px solid var(--dl-border);
-  border-radius: 12px;
-  padding: 0.875rem 1rem;
+.promise p {
   margin: 0;
 }
-.tile-title {
-  font-weight: 600;
-}
-.tile .badge {
-  margin-left: 0.375rem;
-  font-size: 0.75rem;
-}
-.tile-line {
-  display: block;
-  margin-top: 0.25rem;
-  font-size: 0.875rem;
-  line-height: 1.45;
-  color: var(--dl-text-muted);
-}
-@media (min-width: 720px) {
-  .tiles {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-/* On a phone the tiles show their titles only, except the lines that carry a caveat or a list (UI review round 1). */
-@media (max-width: 479.98px) {
-  .tile-line {
-    display: none;
-  }
-  .tile-line.keep {
-    display: block;
-  }
+/* What Plus adds: four rows in one band, closer together than separate bands */
+.chapter--row + .chapter--row {
+  margin-top: var(--sp-3xl);
 }
 
 /* Plus: the Free and Plus table. It scrolls inside its own box if it ever gets too wide; the page never does. */
 .table-wrap {
-  max-width: 100%;
+  max-width: 48rem;
   overflow-x: auto;
-  margin: 1.5rem 0;
+  margin: var(--sp-xl) 0;
 }
 .compare {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.9375rem;
+  font-size: var(--fs-small);
 }
 .compare caption {
   text-align: left;
   color: var(--dl-text-muted);
-  padding-bottom: 0.75rem;
+  padding-bottom: var(--sp-md);
 }
 .compare th,
 .compare td {
@@ -536,19 +951,37 @@ a:hover {
   border-bottom-width: 2px;
 }
 .compare tbody th {
+  width: 38%;
   font-weight: 400;
 }
 .compare td {
   font-weight: 600;
 }
+.table-wrap + h3 {
+  margin: var(--sp-2xl) 0 var(--sp-md);
+}
+@media (min-width: 720px) {
+  .compare {
+    font-size: var(--fs-body);
+  }
+}
 
-/* Support and legal pages */
+/* Questions, support and legal pages */
 .faq dt {
   font-weight: 600;
-  margin-top: 1.25rem;
+  font-size: 1.125rem;
+  line-height: 1.4;
+  margin-top: var(--sp-xl);
+}
+.faq dt:first-child {
+  margin-top: 0;
 }
 .faq dd {
-  margin: 0.25rem 0 0;
+  margin: var(--sp-xs) 0 0;
+  max-width: var(--measure);
+}
+.signpost {
+  margin-top: var(--sp-3xl);
 }
 .signpost .numbers {
   list-style: none;
@@ -564,43 +997,9 @@ a:hover {
 .page {
   padding-top: 2.5rem;
 }
-/* A heading straight inside a page (Plus: Register interest) gets the same rhythm as prose headings. */
+/* A heading straight inside a page gets the same rhythm as prose headings. */
 .page > h2 {
   margin-top: 2em;
-}
-
-@media (min-width: 720px) {
-  .hero {
-    grid-template-columns: 1.1fr 0.9fr;
-    grid-template-areas: 'head shots' 'body shots';
-    align-items: end;
-    padding-top: 4rem;
-  }
-  .hero-body {
-    align-self: start;
-  }
-  .feature {
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
-  }
-  /*
-   * Alternate the text side. Counted among a page's sections: on Home the hero is the first and the features
-   * overview the second (job 20261102-site-features), so Today, the first feature, is the third and keeps its text
-   * on the right as before.
-   */
-  .feature:nth-of-type(odd) .text {
-    order: 2;
-  }
-  /* A section with no screenshot uses the full width, not half of it (UI review round 1). */
-  .feature:not(:has(.shots)) {
-    grid-template-columns: 1fr;
-  }
-  .feature:not(:has(.shots)) .text {
-    max-width: 42rem;
-  }
-  .plans {
-    grid-template-columns: 1fr 1fr;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -613,9 +1012,126 @@ a:hover {
   }
 }
 
-/* "or email ..." beside a mailto button, for people without a mail app */
-.or-email {
-  align-self: center;
-  margin: 0;
-  overflow-wrap: anywhere;
+/*
+ * Sky and layers (plan B, job 20261104-site-overhaul, D2038). The hero's canvas (z 0) holds the Day Arc sky drawn by
+ * /assets/sky.js; the static cream ribbon (z 1) is the arc line; the content (.hero-grid, z 2) sits on top. Both
+ * layers are sized here before any script runs, so nothing shifts. Colours are tokens only.
+ */
+.hero {
+  --ribbon-w: 10px;
+}
+.hero-sky,
+.hero-ribbon {
+  position: absolute;
+  pointer-events: none;
+}
+.hero-sky {
+  display: block;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+.hero-ribbon {
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: var(--ribbon-space);
+  z-index: 1;
+  overflow: visible;
+}
+/* Under the bottom ribbon the page's cream fills to the hero's edge, so the arc is the hero's lower edge (rework 1). */
+.hero-ribbon .ribbon-fill {
+  fill: var(--dl-bg);
+  stroke: none;
+}
+.hero-ribbon path:not(.ribbon-fill) {
+  fill: none;
+  stroke: var(--dl-bg);
+  stroke-width: var(--ribbon-w);
+  stroke-linecap: butt;
+  vector-effect: non-scaling-stroke;
+}
+@media (min-width: 720px) {
+  .hero {
+    --ribbon-w: clamp(14px, 1.6vw, 24px);
+  }
+}
+/*
+ * Phones (rework 1): the hero's text fills the band, so the sky gets its own strip between the controls and the
+ * capture, with the ribbon arc along its foot, like the app's card (particles above an arc). The bottom ribbon goes.
+ */
+.hero-strip {
+  display: none;
+}
+@media (max-width: 719.98px) {
+  .hero {
+    --ribbon-space: 0px;
+  }
+  .hero > .hero-ribbon {
+    display: none;
+  }
+  .hero-strip {
+    display: block;
+    position: relative;
+    height: 120px;
+  }
+  .hero-strip .hero-ribbon {
+    left: calc(-1 * var(--gutter));
+    width: calc(100% + 2 * var(--gutter));
+    height: 44px;
+  }
+}
+
+/* The pause control: invisible but holding its space until sky.js marks it ready (no shift, nothing to focus). */
+.sky-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0 0.875rem;
+  font: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--dl-on-primary);
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--dl-on-primary) 55%, transparent);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+}
+.sky-toggle:not(.is-ready) {
+  visibility: hidden;
+}
+.sky-toggle .glyph-play,
+.sky-toggle.is-paused .glyph-pause {
+  display: none;
+}
+.sky-toggle.is-paused .glyph-play {
+  display: inline;
+}
+
+/* The closing bands' static stars: the app's 14 night stars, frozen, spread through the band's top padding (rework 1). */
+.night-stars {
+  inset: 0 0 auto;
+  height: max(5rem, var(--section-y));
+  color: var(--dl-on-primary);
+}
+
+/* Mirrors the app: no sky under Increase Contrast; none for forced colours or print. */
+@media (prefers-contrast: more), (forced-colors: active), print {
+  .hero-sky,
+  .sky-toggle {
+    display: none !important;
+  }
+}
+@media (forced-colors: active), print {
+  .hero-ribbon,
+  .night-stars {
+    display: none;
+  }
+}
+@media (prefers-contrast: more) {
+  .night-stars {
+    display: none;
+  }
 }
