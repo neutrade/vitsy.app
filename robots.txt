@@ -1,3 +1,5 @@
 # Invite links are personal: keep them out of search results.
 User-agent: *
 Disallow: /i/
+
+Sitemap: https://vitsy.app/sitemap.xml
