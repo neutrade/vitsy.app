@@ -766,8 +766,7 @@ main.bands {
   --ribbon-space: clamp(2rem, 1rem + 5vw, 7rem);
   position: relative;
   isolation: isolate;
-  overflow: hidden;
-  overflow: clip;
+  overflow-x: clip;
   background: var(--dl-primary);
   color: var(--dl-on-primary);
   padding-top: clamp(1rem, 0.2rem + 4vw, 4.5rem);
@@ -1133,5 +1132,179 @@ main.bands {
 @media (prefers-contrast: more) {
   .night-stars {
     display: none;
+  }
+}
+
+/*
+ * Layers (job 20261104-site-layers). Red team #11's limits still hold: the plates and breakouts are static; the only
+ * scroll motion is a plate sliding out from behind its capture (16 px at most, translate only), and none in the hero,
+ * where the sky already moves.
+ *
+ * Plates: every capture sits on a hard-edged dark-teal plate, offset down and right, with no blur and no shadow.
+ */
+:root {
+  --plate-offset: clamp(10px, 0.5vw + 8px, 16px);
+  --overlap: clamp(24px, 3vw + 14px, 56px);
+  /* How much extra room the band below a breakout needs: all of it when the columns stack, half beside them. */
+  --after-overlap: var(--overlap);
+  --seam-h: 24px;
+  /* Extra space a seam adds under its chapter; none from 1024 px, where the gap already holds it. */
+  --seam-room: 16px;
+}
+@media (min-width: 720px) {
+  :root {
+    --after-overlap: calc(var(--overlap) / 2);
+    --seam-h: 32px;
+    --seam-room: 12px;
+  }
+}
+@media (min-width: 1024px) {
+  :root {
+    --seam-room: 0px;
+  }
+}
+.shot,
+.hero-shot {
+  position: relative;
+  isolation: isolate;
+}
+.shot::before,
+.hero-shot::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: var(--radius-lg);
+  background: var(--dl-plate);
+  translate: var(--plate-offset) var(--plate-offset);
+}
+
+/*
+ * A zoomed figure hides its own overflow, which would clip a ::before plate, so its plate is a hard offset box-shadow
+ * (no blur, no spread): the same plate, static. (Clipping the image with clip-path instead tore when composited.)
+ */
+.shot-zoom::before {
+  content: none;
+}
+.shot-zoom {
+  box-shadow: var(--plate-offset) var(--plate-offset) 0 0 var(--dl-plate);
+}
+
+/* Breakouts: the hero and Privacy captures cross their teal band's lower edge into the cream band below, which makes room. */
+.breakout,
+.hero-shot {
+  z-index: 3;
+  margin-bottom: calc(-1 * (var(--section-y) + var(--overlap)));
+}
+.hero-shot {
+  margin-bottom: calc(-1 * (var(--section-y) + var(--ribbon-space) + var(--overlap)));
+}
+@media (min-width: 720px) {
+  .breakout,
+  .hero-shot {
+    align-self: end;
+  }
+}
+.band-after-breakout {
+  padding-top: calc(var(--section-y) + var(--after-overlap));
+}
+
+/*
+ * Horizon seams (Home): one at the foot of each feature chapter, in the gap before the next, never under text. Each
+ * line runs between heights fixed in its viewBox, and each starts where the last ended, so together they rise and set
+ * like the Day Arc at every width. A capsule marker moves left to right through the day; the moon ends it.
+ */
+.has-horizon {
+  position: relative;
+  padding-bottom: calc(var(--section-y) + var(--seam-room));
+}
+.seam {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc((var(--section-y) + var(--seam-room) - var(--seam-h)) / 2);
+  height: var(--seam-h);
+  pointer-events: none;
+}
+.horizon {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.horizon-line {
+  fill: none;
+  stroke: var(--dl-primary);
+  stroke-width: 2px;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+  opacity: 0.55;
+}
+.horizon-marker,
+.horizon-moon {
+  position: absolute;
+  translate: -50% -50%;
+}
+.horizon-marker {
+  width: 26px;
+  height: 12px;
+  border-radius: var(--radius-pill);
+  background: var(--dl-accent);
+  border: 2px solid var(--dl-primary);
+}
+.horizon-moon {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  box-shadow: inset 6px -3px 0 0 var(--dl-accent);
+}
+/* Where each marker sits on its seam's line (x, then the line's height there, as shares of the seam). */
+.horizon-marker--1 {
+  left: 15%;
+  top: 79.6%;
+}
+.horizon-marker--2 {
+  left: 32%;
+  top: 40.7%;
+}
+.horizon-marker--3 {
+  left: 50%;
+  top: 17.4%;
+}
+.horizon-marker--4 {
+  left: 68%;
+  top: 19.9%;
+}
+.horizon-marker--5 {
+  left: 85%;
+  top: 45.6%;
+}
+.seam--6 .horizon-moon {
+  left: 85%;
+  top: 79.6%;
+}
+@media (forced-colors: active), print {
+  .seam {
+    display: none;
+  }
+}
+
+/* Scroll depth: the plate slides out from behind its capture as the figure comes into view. Without support, it's static. */
+@keyframes plate-rise {
+  from { translate: 0 0; }
+  to { translate: var(--plate-offset) var(--plate-offset); }
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .shot::before {
+      animation: plate-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 40%;
+    }
+    /* The sky's Pause button stops this too: one control for all the page's motion. */
+    :root:has(.sky-toggle.is-paused) .shot::before {
+      animation: none;
+    }
   }
 }
