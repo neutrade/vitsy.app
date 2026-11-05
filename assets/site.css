@@ -510,9 +510,12 @@ h2,
   --crop-ratio: 750 / 505;
   --crop-y: 57.97%;
 }
+/* The free sheet (reminders-free, job 20261105-site-free-reminders-shot), 531-897 px: from the gap under the grabber
+   (521-551) to the middle of the gap after "Item names are hidden in all notifications." (880-915), so "Change in
+   Settings" is never cut. */
 .crop-reminders {
-  --crop-ratio: 750 / 443;
-  --crop-y: 44.78%;
+  --crop-ratio: 750 / 366;
+  --crop-y: 42.04%;
 }
 .crop-history {
   --crop-ratio: 750 / 639;
@@ -539,9 +542,11 @@ h2,
   --crop-ratio: 750 / 863;
   --crop-y: 44.68%;
 }
+/* The free sheet, 531-1361 px: from the gap under the grabber to 23 px below the Reminder health card (its foot is at
+   1338), about the room above the title, rather than into the blank sheet below (to 1571). */
 .crop-reminders-sheet {
-  --crop-ratio: 750 / 878;
-  --crop-y: 70.72%;
+  --crop-ratio: 750 / 830;
+  --crop-y: 66.46%;
 }
 .crop-item {
   --crop-ratio: 750 / 700;
