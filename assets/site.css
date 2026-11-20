@@ -477,9 +477,9 @@ h2,
 }
 
 /*
- * Screenshots: the raw simulator capture. The display's rounded corners are drawn here (iPhone 18 Pro: about 13.7%
- * of the width by 6.3% of the height). No padding, background, shadow or frame: only a hairline so a light screen
- * still reads against the light page.
+ * Screenshots: the raw simulator capture, whole, in a phone (job 20261105-site-obvious-phone). The display's rounded
+ * corners are drawn here (iPhone 18 Pro: about 13.7% of the width by 6.3% of the height). No padding, background or
+ * shadow: the frame around it is .phone.
  */
 .screen {
   display: block;
@@ -487,123 +487,90 @@ h2,
   height: auto;
   aspect-ratio: 1206 / 2622;
   border-radius: 13.7% / 6.3%;
-  border: 1px solid var(--dl-border);
 }
 /*
- * Crops (D-A2): CSS only, over the full capture, so the file keeps the device shape. For a crop from t to b of the
- * capture's height H (750 px wide): --crop-ratio is 750 / ((b - t) x H) and --crop-y is t / (1 - (b - t)).
+ * One CSS frame for every capture: no image, no new token, no brand mark, and everything in percentages so it scales
+ * with the width. The bezel is 3.2% on all four sides (padding resolves against the width). The radius follows the
+ * screen's. The 1px transparent border keeps the outline in forced colours.
  */
-.crop {
-  max-width: none;
-  width: 100%;
-  aspect-ratio: var(--crop-ratio);
-  object-fit: cover;
-  object-position: 50% var(--crop-y);
-  border-radius: var(--radius-lg);
-}
-.crop-hero,
-.crop-arc {
-  --crop-ratio: 750 / 521;
-  --crop-y: 10.29%;
-}
-.crop-stack {
-  --crop-ratio: 750 / 505;
-  --crop-y: 57.97%;
-}
-/* The free sheet (reminders-free, job 20261105-site-free-reminders-shot), 531-897 px: from the gap under the grabber
-   (521-551) to the middle of the gap after "Item names are hidden in all notifications." (880-915), so "Change in
-   Settings" is never cut. */
-.crop-reminders {
-  --crop-ratio: 750 / 366;
-  --crop-y: 42.04%;
-}
-.crop-history {
-  --crop-ratio: 750 / 639;
-  --crop-y: 80.25%;
-}
-.crop-privacy {
-  --crop-ratio: 750 / 505;
-  --crop-y: 25.07%;
-}
-.crop-training {
-  --crop-ratio: 750 / 373;
-  --crop-y: 41.25%;
-}
-.crop-patterns {
-  --crop-ratio: 750 / 502;
-  --crop-y: 28.32%;
-}
-.crop-milestone {
-  --crop-ratio: 750 / 571;
-  --crop-y: 61.54%;
-}
-/* The feature pages' captures (job 20261104-site-overhaul, plan C), each on its own page only. */
-.crop-sites {
-  --crop-ratio: 750 / 863;
-  --crop-y: 44.68%;
-}
-/* The free sheet, 531-1361 px: from the gap under the grabber to 23 px below the Reminder health card (its foot is at
-   1338), about the room above the title, rather than into the blank sheet below (to 1571). */
-.crop-reminders-sheet {
-  --crop-ratio: 750 / 830;
-  --crop-y: 66.46%;
-}
-.crop-item {
-  --crop-ratio: 750 / 700;
-  --crop-y: 21.05%;
+.phone {
+  position: relative;
+  padding: 3.2%;
+  border: 1px solid transparent;
+  border-radius: 15.5% / 7%;
+  background: var(--dl-text);
 }
 /*
- * The hero capture beside the text (fix-site-layers rework 1). Each crop starts and ends on a clean line of the capture
- * and is about as tall as the hero's text plus the band's bottom padding in its range, so it reaches the arc without
- * stretching: the whole screen up to 815 px; from under the status bar to the screen's foot up to 927 px; from under
- * the status bar to the gap between Omega-3 and Iron (1,370 of 1,629 px) from 928 px.
+ * A generic camera pill: 24% of the screen's width and about 50 px of the capture's 1,629, centred, on the status bar's
+ * line. The time's ink ends at x 194 and the signal icons' starts at x 514 (of 750), on both capture shapes, and the
+ * first content starts below y 105, so it covers none of them (measured with the job's tools/measure-status-bars.py).
  */
-@media (min-width: 720px) and (max-width: 815.98px) {
-  .crop-hero {
-    --crop-ratio: 750 / 1629;
-    --crop-y: 0%;
-  }
+.phone::before {
+  content: '';
+  position: absolute;
+  top: 3.4%;
+  left: 50%;
+  width: 22.5%;
+  height: 3%;
+  translate: -50% 0;
+  border-radius: var(--radius-pill);
+  background: var(--dl-text);
 }
-@media (min-width: 816px) and (max-width: 927.98px) {
-  .crop-hero {
-    --crop-ratio: 750 / 1515;
-    --crop-y: 100%;
-  }
-}
-@media (min-width: 928px) {
-  .crop-hero {
-    --crop-ratio: 750 / 1256;
-    --crop-y: 30.56%;
-  }
+/*
+ * The buttons: 3 px rails outside the body, two volume buttons on the left and a power button on the right. Percentage
+ * gradients rather than the spec's box-shadow copies, because a box-shadow's offset can't be a percentage, so it can't
+ * reach the right-hand edge of a phone whose width varies.
+ */
+.phone::after {
+  content: '';
+  position: absolute;
+  inset: 0 -3px;
+  pointer-events: none;
+  background:
+    linear-gradient(var(--dl-text), var(--dl-text)) left 0 top 17% / 3px 5.5% no-repeat,
+    linear-gradient(var(--dl-text), var(--dl-text)) left 0 top 24% / 3px 5.5% no-repeat,
+    linear-gradient(var(--dl-text), var(--dl-text)) right 0 top 20% / 3px 9% no-repeat;
 }
 /* Home's chapter links to the feature pages. */
 .more-link {
   font-weight: 600;
 }
-/*
- * Rework 1: a capture whose sheet sits on a dimmed backdrop is zoomed slightly inside its rounded figure, so the grey
- * bars either side of the sheet don't show. The crop formulas still apply to the zoomed image.
- */
-.shot-zoom {
-  border: 1px solid var(--dl-border);
-  overflow: hidden;
-  border-radius: var(--radius-lg);
-}
-.shot-zoom .zoomed {
-  --zoom: 1.06;
-  width: calc(100% * var(--zoom));
-  margin-inline: calc((1 - var(--zoom)) * 50%);
-  border: 0;
-  border-radius: 0;
+/* Marks the two Plus chapters on Home in words, not colour: text and a hairline, with no fill, on the cream band. */
+.plus-label {
+  display: inline-block;
+  padding: 0 var(--sp-sm);
+  border: 1px solid var(--dl-primary);
+  border-radius: var(--radius-pill);
+  color: var(--dl-primary);
+  font-family: var(--font-body);
+  font-size: var(--fs-caption);
+  font-weight: 600;
+  line-height: 1.6;
 }
 /*
- * A figure is never wider than the capture at 2x, so it never upscales on a retina screen. It leaves room for its two
- * plates (see Layers), so the outer plate never runs into the gutter.
+ * A phone is never wider than the capture at 2x, so it never upscales on a retina screen. Its width leaves one offset
+ * for its plate (see Layers), but the phone is centred, so where the column is tight (at 320 and 768, say) the plate reaches
+ * part-way into the gutter: it stays on the page and never causes sideways scroll. 280 px below 720 px; from there 320 px
+ * on chapters, which fits a whole phone in one 800 px screen, and 300 px in the hero and a feature page's intro.
  */
+:root {
+  --phone-w: 17.5rem;
+}
+@media (min-width: 720px) {
+  :root {
+    --phone-w: 20rem;
+  }
+  .hero-shot {
+    --phone-w: 18.75rem;
+  }
+  .band-intro .shot {
+    --phone-w: 18.75rem;
+  }
+}
 .shot,
 .hero-shot {
   margin: 0;
-  width: min(100% - 2 * var(--plate-offset), 23.4375rem);
+  width: min(100% - var(--plate-offset), var(--phone-w));
   justify-self: center;
 }
 
@@ -654,9 +621,6 @@ main.bands {
 .band-teal .muted,
 .band-night .muted {
   color: var(--dl-on-primary);
-}
-.band-teal .screen {
-  border-color: var(--dl-primary);
 }
 .band-teal :focus-visible,
 .band-night :focus-visible {
@@ -824,6 +788,12 @@ main.bands {
 .hero a:not(.button) {
   color: var(--dl-on-primary);
 }
+/* "on your phone." stays on one line, from the narrowest width it fits (the line is 250 px wide at 320). */
+@media (min-width: 320px) {
+  .nowrap {
+    white-space: nowrap;
+  }
+}
 .hero .highlight {
   color: var(--dl-accent);
 }
@@ -844,15 +814,15 @@ main.bands {
 .proof .availability {
   font-weight: 600;
 }
+.proof .proof-plus {
+  margin-top: var(--sp-xs);
+}
 .proof-list {
   display: flex;
   flex-wrap: wrap;
   gap: 0 var(--sp-lg);
   list-style: none;
   padding: 0;
-}
-.hero .screen {
-  border-color: var(--dl-primary);
 }
 .hero :focus-visible {
   outline-color: var(--dl-accent);
@@ -863,10 +833,6 @@ main.bands {
     grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
     column-gap: var(--sp-3xl);
     align-items: start;
-  }
-  /* Centred in its column like every chapter's capture, so the hero and Today captures share a left edge. */
-  .hero-shot {
-    justify-self: center;
   }
 }
 
@@ -1088,14 +1054,17 @@ main.bands {
 @media (max-width: 719.98px) {
   .hero {
     --ribbon-space: 0px;
-    padding-top: 4.5rem;
+    padding-top: 3rem;
   }
   /*
-   * Open sky between the text and the capture, where the strip was. It also keeps the capture below the first screen
-   * of a small phone, so the lead stays the largest thing painted there (LCP unchanged).
+   * Open sky between the text and the phone, where the strip was. 48 px up to 390 px wide, so the top of the phone (bezel,
+   * 09:41, camera) shows on a 375 x 812 first screen, because a stranger should see a phone without scrolling
+   * (job 20261105-site-obvious-phone, rework 1); on a small phone it stays below the first screen. The gap grows to 96 px
+   * by 430 px wide, where the text is shorter and the screens taller: at 48 px, 412 x 915 and 430 x 932 would show enough
+   * of the phone to make the image the largest paint rather than the text (measured in the job's build.md).
    */
   .hero-grid {
-    row-gap: var(--sp-5xl);
+    row-gap: clamp(var(--sp-3xl), var(--sp-3xl) + (100vw - 390px) * 1.2, var(--sp-5xl));
   }
   .hero > .hero-ribbon {
     display: none;
@@ -1135,13 +1104,15 @@ main.bands {
 }
 
 /*
- * Layers (job 20261104-site-layers; job 20261104-site-sky-mobile). The plates and breakouts are static; the scroll
- * motion is CSS only and translate only: each plate slides out from behind its capture (one offset, 16 px at most), and
- * on Home each capture drifts 40 px against its text across its view range (a parallax Stephen asked for on 4 Nov 2026,
- * overriding red team #11's 24 px rule). None in the hero, where the sky already moves and the LCP image stays still.
+ * Layers (job 20261104-site-layers; job 20261104-site-sky-mobile). The plate and breakouts are static; the scroll motion
+ * is CSS only and translate only: the plate slides out from behind its phone (one offset, 16 px at most), and on Home each
+ * phone drifts 40 px against its text across its view range (a parallax Stephen asked for on 4 Nov 2026, overriding red
+ * team #11's 24 px rule). None in the hero, where the sky already moves and the LCP image stays still.
  *
- * Plates: every capture sits on a stack of two hard-edged plates, offset down and right with no blur and no shadow: the
- * dark-teal plate at one offset and a lighter teal one at two, so it reads as three cards.
+ * The plate: one hard-edged card behind every phone, offset down and right with no blur and no shadow, in --dl-heat-2.
+ * Job 20261105-site-obvious-phone: a second plate in --dl-plate sat against the near-black phone and merged with its right
+ * and bottom edges, losing the silhouette, so there's one. It stays on ::after because sky.js reads that pseudo-element's
+ * translate to keep the sky off it.
  */
 :root {
   --plate-offset: clamp(12px, 0.5vw + 10px, 16px);
@@ -1168,41 +1139,26 @@ main.bands {
   position: relative;
   isolation: isolate;
 }
-.shot::before,
-.hero-shot::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  border-radius: var(--radius-lg);
-  background: var(--dl-plate);
-  translate: var(--plate-offset) var(--plate-offset);
-}
-/* The second plate, further back: an existing palette token that reads on cream and on the brand teal. */
 .shot::after,
 .hero-shot::after {
   content: '';
   position: absolute;
   inset: 0;
-  z-index: -2;
-  border-radius: var(--radius-lg);
+  z-index: -1;
+  border-radius: 15.5% / 7%;
   background: var(--dl-heat-2);
-  translate: calc(2 * var(--plate-offset)) calc(2 * var(--plate-offset));
+  translate: var(--plate-offset) var(--plate-offset);
 }
 
 /*
- * A zoomed figure hides its own overflow, which would clip its pseudo-element plates, so its plates are two hard offset
- * box-shadows (no blur, no spread): the same plates, static. (Clipping the image with clip-path instead tore when
- * composited.)
+ * A feature page's intro phone and its plate end within 1280 x 800. At the full 16 px offset the plate would end 0.2 px
+ * past it, so the offset here is half a pixel less.
  */
-.shot-zoom::before,
-.shot-zoom::after {
-  content: none;
+@media (min-width: 720px) {
+  .band-intro .shot {
+    --plate-offset: clamp(12px, 0.5vw + 9.5px, 15.5px);
+  }
 }
-.shot-zoom {
-  box-shadow: var(--plate-offset) var(--plate-offset) 0 0 var(--dl-plate), calc(2 * var(--plate-offset)) calc(2 * var(--plate-offset)) 0 0 var(--dl-heat-2);
-}
-
 /*
  * Breakouts. When the columns stack, the hero and Privacy captures come last and cross their teal band's lower edge into
  * the cream band below, which makes room. (Fix-site-layers: no capture is bottom-aligned beside its text any more.)
@@ -1218,28 +1174,15 @@ main.bands {
 .band-after-breakout {
   padding-top: calc(var(--section-y) + var(--after-overlap));
 }
-/* Phones: the figure starts at the text's edge and its outer plate ends at the gutter (the figure is narrowed by both). */
-@media (max-width: 719.98px) {
-  .shot,
-  .hero-shot {
-    justify-self: start;
-  }
-}
 @media (min-width: 720px) {
   /*
-   * Beside the headline, the hero capture starts level with the text. Its negative margin (the band's bottom padding)
-   * lets it hang over the arc to the hero's lower edge; when it's taller than the text plus that padding, the band
-   * grows to it and it still ends at the edge. Its crop is fixed (rework 1: a capture stretched to the row was cut
-   * wherever the row ended, often through a line of text), so the figure and its plate end where the image ends.
+   * Beside the headline, the hero phone starts level with the text. Its negative margin (the band's bottom padding)
+   * lets it hang over the arc towards the hero's lower edge, so it never forces the band taller.
    */
   .hero-shot {
     align-self: start;
     justify-self: center;
     margin-bottom: calc(-1 * (var(--section-y) + var(--ribbon-space)));
-  }
-  /* Today's capture starts at least 160 px below the hero's outer plate, so the two Day Arc cards don't read as a pair. */
-  .hero + .chapters > .band-after-breakout:first-child {
-    padding-top: calc(160px + 2 * var(--plate-offset));
   }
   /* Beside its text the Privacy capture is centred, with no breakout, so Plus needs no extra room. */
   .breakout {
@@ -1269,19 +1212,19 @@ main.bands {
   pointer-events: none;
 }
 /*
- * Phones: where a capture ends the chapter, the seam sits 28 px below its outer plate (the rest of the gap is below the
- * seam), and the chapter keeps room for both plates, so the gap below the seam is no smaller than with one plate.
+ * Phones: where a phone ends the chapter, the seam sits 28 px below its plate (the rest of the gap is below the seam),
+ * and the chapter keeps room for the plate.
  */
 @media (max-width: 719.98px) {
   .has-horizon:has(> .wrap > .shot) {
-    --seam-room: calc(16px + 2 * var(--plate-offset));
+    --seam-room: calc(16px + var(--plate-offset));
   }
   .has-horizon:has(> .wrap > .shot) > .seam {
-    bottom: calc(var(--section-y) + var(--seam-room) - 2 * var(--plate-offset) - 28px - var(--seam-h));
+    bottom: calc(var(--section-y) + var(--seam-room) - var(--plate-offset) - 28px - var(--seam-h));
   }
 }
 /*
- * From 720 px the seam stays centred in the gap, and a chapter with a capture keeps 48 px more of it, so the outer plate
+ * From 720 px the seam stays centred in the gap, and a chapter with a capture keeps 48 px more of it, so the plate
  * clears the seam even at the low end of the capture's drift (job 20261104-site-sky-mobile).
  */
 @media (min-width: 720px) {
@@ -1350,18 +1293,14 @@ main.bands {
 }
 
 /*
- * Scroll depth. Each plate slides out from behind its capture as the figure comes into view: plate 1 from under the
- * capture to one offset, plate 2 from one offset to two, so the stack fans out. On Home each capture (not the hero's)
- * also drifts 40 px against its text across its whole view range, from 20 px low to 20 px high, so it reads as a layer
- * in front of the page (Stephen, 4 Nov 2026). Without scroll timelines, or with reduced motion, all of it is static.
+ * Scroll depth. The plate slides out from behind its phone to one offset as the figure comes into view. On Home each phone
+ * (not the hero's) also drifts 40 px against its text across its whole view range, from 20 px low to 20 px high, so it
+ * reads as a layer in front of the page (Stephen, 4 Nov 2026). Without scroll timelines, or with reduced motion, all of it
+ * is static.
  */
 @keyframes plate-rise {
   from { translate: 0 0; }
   to { translate: var(--plate-offset) var(--plate-offset); }
-}
-@keyframes plate-fan {
-  from { translate: var(--plate-offset) var(--plate-offset); }
-  to { translate: calc(2 * var(--plate-offset)) calc(2 * var(--plate-offset)); }
 }
 @keyframes capture-drift {
   from { translate: 0 20px; }
@@ -1369,13 +1308,8 @@ main.bands {
 }
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
-    .shot::before {
-      animation: plate-rise linear both;
-      animation-timeline: view();
-      animation-range: entry 10% cover 40%;
-    }
     .shot::after {
-      animation: plate-fan linear both;
+      animation: plate-rise linear both;
       animation-timeline: view();
       animation-range: entry 10% cover 40%;
     }
